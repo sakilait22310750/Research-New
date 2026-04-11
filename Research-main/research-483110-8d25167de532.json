@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "research-483110",
+  "private_key_id": "8d25167de532f285f6dbec58d64f6a59d955edaf",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCTNZ/l7/JnaiPF\nhsBh7eCXSEIDatahHlLcMIq9JFlCFvgiGgYPOt+pQXDfY6J0v8Pa9O3rs8D6EowB\nk/8feak+K+JaAKDvQqQSOlMzK/SWny0cnmksVAQPVEGLmKwL7X7/hHsCt4ayNQGX\nLOMtD0nUhm/NBXCtw4zWR5yQdL1ptYB1QFEhUoGm+V3tk6cNb1btGKdGsFiLaGaO\nfnI9U7pzybcojxfgbujSFjxNMwchsmX8jL9tWaf0lsDFg0otJso79l7sp8YN2VSb\nhdc9QN02XI3lwSidXI0ghQqRpyrl/kmCxUMkHq/9RY76OAvg6RHoaq/mpS19KrqA\n2QQOHPLFAgMBAAECggEAF5fPFjOUJpXgwM4ddDSDO8vFZLXRS0ZIYmjXO4QhWBHF\nV/XSxcsaQI6v7+WQimSXl7aMkSuggJPLY49cIqfFg6TV5LXYFTCZiiBV6Ewhqag+\nOyl6UrPuaKSI0r43yLuaEIqjimZujI4pQJjdmgGqxAh9z56RFhBSuJ8GjTJgjxnd\nDib0Eod859DFdYwDdQ9cFN4g27nhfCby2Qaa/K5oA895hxdyQ2OiBGaGGBR7JoL9\nSK/aqp0jw7bnuGiiVpRClyHIaOIHp694NsS0CyrbCWmj6AqI/YZ+DGrXVgusIoil\nz+HjOlXtEZahEoQ1T1SOcurRmGnxc+CV2WhjecpmiwKBgQDFW1BndlbegQcJyYBV\n4OCn2MRj97tTevdwLZgWmYxdvDm64DOmfm6iHc/0wfIBlADv7ZOBVSJjfpnnsiB3\nwycnEzHImHNK+sfKDdMWMszYdUcjX5K8SEL1g/Bzm3jtWOb2MMX87ZDRpdPCNsr0\n4pU2w1CPa65WpRgkQmH4fxUKYwKBgQC+86vudSRUTpJg2xRaUwKMg2D641uAm/ox\nkYyUkVTEv0bVmfIkxVXHQgOCnwS9+H3VEliLPEF+qrCWQxyPrRH5SIRBDnnO76ba\nA+uxjhfiYcs0i8z61sBsJRhnabtkKjQjThrWVhz89BiXZUE/UT9HT+so/jLijCA+\nCfXMg5dCtwKBgEfRgAP2i4wy9gW4vywBRp+uAWHDn/a0E+FNpj/rJqphubxopEMd\nVVNHeArAnTm3y1OEaB4zhe0hAA7RwoDykofks0QlPid19UhxGXTFjcfjfbzApdxA\ni6Vemxzm4e21YW8LtrDhHsc8CkBtwhO1dMlV8DYQ4IOFVrCzO4W7cUOzAoGBAJiy\n03LFSmAA1R2PFB+G8irbhNocpjeag+DPu9OyxE7xhvuZOAIfrBDDwXrbHzerVzTk\njtoJPXbFmKEQ2e4rQIxQaTJ9GPtaudrt97TtJDxsZ8uFYE3XHdldcL6B1tCqzzbM\nZrmv8051BJVM63huyGOGjU8iuB5iYAY8gMsjD/rRAoGBAJ0Qy1Qh81XduINg0+Of\n2+wldUSwP1hMW5ygASdzvjBY5YtqHyBB2dhkgvxJ5ove3ornzqpsf2gUenUCGgI1\nPOJ36ttFfoGlagHhUIKPWZCLkV45i2NGnE9zSSVgYcu/klLb0EzuheXrv5RFwcDI\n3w03m4uJSMVJwKW1Wr4uHAzX\n-----END PRIVATE KEY-----\n",
+  "client_email": "hotel-images-service@research-483110.iam.gserviceaccount.com",
+  "client_id": "109964673014752380378",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/hotel-images-service%40research-483110.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

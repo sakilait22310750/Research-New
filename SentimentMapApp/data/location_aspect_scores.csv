@@ -1,0 +1,201 @@
+location,aspect,avg_polarity,avg_confidence
+Bentota Beach,amenities,0.331,0.338
+Bentota Beach,cleanliness,0.374,0.374
+Bentota Beach,crowd,0.256,0.269
+Bentota Beach,food,0.394,0.407
+Bentota Beach,location,0.334,0.342
+Bentota Beach,safety,0.249,0.285
+Bentota Beach,service,0.229,0.261
+Bentota Beach,transport,0.108,0.17
+Bentota Beach,value,0.199,0.216
+Bentota Beach,view,0.481,0.485
+Dambulla Cave Temple,amenities,0.255,0.286
+Dambulla Cave Temple,cleanliness,0.272,0.324
+Dambulla Cave Temple,crowd,0.183,0.243
+Dambulla Cave Temple,food,0.348,0.397
+Dambulla Cave Temple,location,0.224,0.261
+Dambulla Cave Temple,safety,0.222,0.222
+Dambulla Cave Temple,service,0.083,0.284
+Dambulla Cave Temple,transport,0.217,0.258
+Dambulla Cave Temple,value,0.224,0.262
+Dambulla Cave Temple,view,0.522,0.534
+Diyaluma Falls,amenities,0.268,0.289
+Diyaluma Falls,cleanliness,-0.28,0.32
+Diyaluma Falls,crowd,0.104,0.187
+Diyaluma Falls,food,0.369,0.384
+Diyaluma Falls,location,0.227,0.291
+Diyaluma Falls,safety,0.302,0.302
+Diyaluma Falls,service,0.167,0.232
+Diyaluma Falls,transport,0.182,0.221
+Diyaluma Falls,value,0.261,0.269
+Diyaluma Falls,view,0.499,0.499
+Galle Fort,amenities,0.293,0.319
+Galle Fort,cleanliness,0.333,0.348
+Galle Fort,crowd,0.184,0.213
+Galle Fort,food,0.339,0.357
+Galle Fort,location,0.222,0.267
+Galle Fort,safety,0.26,0.282
+Galle Fort,service,0.246,0.249
+Galle Fort,transport,0.223,0.242
+Galle Fort,value,0.201,0.252
+Galle Fort,view,0.483,0.487
+Hikkaduwa Beach,amenities,0.289,0.328
+Hikkaduwa Beach,cleanliness,0.276,0.349
+Hikkaduwa Beach,crowd,0.157,0.218
+Hikkaduwa Beach,food,0.333,0.352
+Hikkaduwa Beach,location,0.295,0.329
+Hikkaduwa Beach,safety,0.187,0.307
+Hikkaduwa Beach,service,0.231,0.3
+Hikkaduwa Beach,transport,0.107,0.164
+Hikkaduwa Beach,value,0.154,0.223
+Hikkaduwa Beach,view,0.444,0.456
+Horton Plains National Park,amenities,0.234,0.251
+Horton Plains National Park,cleanliness,0.321,0.33
+Horton Plains National Park,crowd,0.11,0.191
+Horton Plains National Park,food,0.328,0.346
+Horton Plains National Park,location,0.192,0.216
+Horton Plains National Park,safety,0.146,0.226
+Horton Plains National Park,service,0.145,0.259
+Horton Plains National Park,transport,0.191,0.252
+Horton Plains National Park,value,0.18,0.244
+Horton Plains National Park,view,0.388,0.411
+Jaya Sri Maha Bodhi,amenities,0.259,0.271
+Jaya Sri Maha Bodhi,cleanliness,0.158,0.255
+Jaya Sri Maha Bodhi,crowd,0.255,0.28
+Jaya Sri Maha Bodhi,food,0.263,0.289
+Jaya Sri Maha Bodhi,location,0.098,0.162
+Jaya Sri Maha Bodhi,safety,0.128,0.13
+Jaya Sri Maha Bodhi,service,0.244,0.304
+Jaya Sri Maha Bodhi,transport,0.158,0.208
+Jaya Sri Maha Bodhi,value,0.188,0.21
+Jaya Sri Maha Bodhi,view,0.343,0.423
+Jungle Beach,amenities,0.184,0.224
+Jungle Beach,cleanliness,0.116,0.248
+Jungle Beach,crowd,0.133,0.18
+Jungle Beach,food,0.213,0.266
+Jungle Beach,location,0.189,0.241
+Jungle Beach,safety,0.185,0.261
+Jungle Beach,service,0.093,0.174
+Jungle Beach,transport,0.095,0.137
+Jungle Beach,value,0.131,0.195
+Jungle Beach,view,0.392,0.419
+Minneriya National Park,amenities,0.245,0.274
+Minneriya National Park,cleanliness,-0.06,0.231
+Minneriya National Park,crowd,0.158,0.194
+Minneriya National Park,food,0.361,0.375
+Minneriya National Park,location,0.196,0.236
+Minneriya National Park,safety,0.326,0.382
+Minneriya National Park,service,0.145,0.254
+Minneriya National Park,transport,0.179,0.22
+Minneriya National Park,value,0.113,0.174
+Minneriya National Park,view,0.386,0.415
+Mirissa Beach,amenities,0.376,0.387
+Mirissa Beach,cleanliness,0.38,0.385
+Mirissa Beach,crowd,0.247,0.305
+Mirissa Beach,food,0.379,0.39
+Mirissa Beach,location,0.376,0.397
+Mirissa Beach,safety,0.198,0.354
+Mirissa Beach,service,0.259,0.32
+Mirissa Beach,transport,0.108,0.149
+Mirissa Beach,value,0.218,0.266
+Mirissa Beach,view,0.522,0.522
+Negombo Beach,amenities,0.239,0.284
+Negombo Beach,cleanliness,0.053,0.31
+Negombo Beach,crowd,0.185,0.265
+Negombo Beach,food,0.34,0.386
+Negombo Beach,location,0.219,0.282
+Negombo Beach,safety,0.115,0.197
+Negombo Beach,service,0.181,0.304
+Negombo Beach,transport,0.276,0.287
+Negombo Beach,value,0.127,0.262
+Negombo Beach,view,0.414,0.436
+Nilaveli Beach,amenities,0.31,0.324
+Nilaveli Beach,cleanliness,0.258,0.316
+Nilaveli Beach,crowd,0.201,0.219
+Nilaveli Beach,food,0.293,0.338
+Nilaveli Beach,location,0.327,0.341
+Nilaveli Beach,safety,0.21,0.272
+Nilaveli Beach,service,0.304,0.308
+Nilaveli Beach,transport,0.159,0.177
+Nilaveli Beach,value,0.205,0.207
+Nilaveli Beach,view,0.517,0.538
+Pinnawala Elephant Orphanage,amenities,0.157,0.203
+Pinnawala Elephant Orphanage,cleanliness,0.207,0.219
+Pinnawala Elephant Orphanage,crowd,0.093,0.187
+Pinnawala Elephant Orphanage,food,0.185,0.291
+Pinnawala Elephant Orphanage,location,0.164,0.203
+Pinnawala Elephant Orphanage,safety,0.184,0.252
+Pinnawala Elephant Orphanage,service,0.135,0.229
+Pinnawala Elephant Orphanage,transport,0.117,0.174
+Pinnawala Elephant Orphanage,value,0.132,0.174
+Pinnawala Elephant Orphanage,view,0.216,0.288
+Polonnaruwa,amenities,0.217,0.253
+Polonnaruwa,cleanliness,0.13,0.23
+Polonnaruwa,crowd,0.155,0.198
+Polonnaruwa,food,0.296,0.343
+Polonnaruwa,location,0.177,0.201
+Polonnaruwa,safety,0.104,0.271
+Polonnaruwa,service,0.155,0.261
+Polonnaruwa,transport,0.197,0.236
+Polonnaruwa,value,0.198,0.24
+Polonnaruwa,view,0.338,0.346
+Ravana Ella Falls,amenities,0.236,0.293
+Ravana Ella Falls,cleanliness,-0.2,0.441
+Ravana Ella Falls,crowd,0.155,0.208
+Ravana Ella Falls,food,0.346,0.445
+Ravana Ella Falls,location,0.229,0.25
+Ravana Ella Falls,safety,0.061,0.386
+Ravana Ella Falls,service,0.054,0.13
+Ravana Ella Falls,transport,0.082,0.158
+Ravana Ella Falls,value,0.206,0.226
+Ravana Ella Falls,view,0.399,0.422
+Royal Botanical Gardens,amenities,0.311,0.337
+Royal Botanical Gardens,cleanliness,0.363,0.371
+Royal Botanical Gardens,crowd,0.247,0.277
+Royal Botanical Gardens,food,0.374,0.389
+Royal Botanical Gardens,location,0.236,0.279
+Royal Botanical Gardens,safety,0.266,0.266
+Royal Botanical Gardens,service,0.424,0.468
+Royal Botanical Gardens,transport,0.207,0.258
+Royal Botanical Gardens,value,0.208,0.252
+Royal Botanical Gardens,view,0.552,0.555
+Sigiriya The Ancient Rock Fortress,amenities,0.303,0.314
+Sigiriya The Ancient Rock Fortress,cleanliness,0.242,0.244
+Sigiriya The Ancient Rock Fortress,crowd,0.186,0.211
+Sigiriya The Ancient Rock Fortress,food,0.307,0.339
+Sigiriya The Ancient Rock Fortress,location,0.219,0.244
+Sigiriya The Ancient Rock Fortress,safety,0.12,0.226
+Sigiriya The Ancient Rock Fortress,service,0.141,0.25
+Sigiriya The Ancient Rock Fortress,transport,0.092,0.197
+Sigiriya The Ancient Rock Fortress,value,0.238,0.268
+Sigiriya The Ancient Rock Fortress,view,0.46,0.46
+Temple of the Sacred Tooth Relic,amenities,0.247,0.26
+Temple of the Sacred Tooth Relic,cleanliness,0.146,0.202
+Temple of the Sacred Tooth Relic,crowd,0.16,0.198
+Temple of the Sacred Tooth Relic,food,0.367,0.389
+Temple of the Sacred Tooth Relic,location,0.202,0.22
+Temple of the Sacred Tooth Relic,safety,0.117,0.156
+Temple of the Sacred Tooth Relic,service,0.111,0.178
+Temple of the Sacred Tooth Relic,transport,0.214,0.23
+Temple of the Sacred Tooth Relic,value,0.132,0.198
+Temple of the Sacred Tooth Relic,view,0.468,0.481
+Udawalawe National Park,amenities,0.196,0.223
+Udawalawe National Park,cleanliness,0.308,0.308
+Udawalawe National Park,crowd,0.202,0.209
+Udawalawe National Park,food,0.398,0.439
+Udawalawe National Park,location,0.3,0.313
+Udawalawe National Park,safety,0.297,0.297
+Udawalawe National Park,service,0.251,0.258
+Udawalawe National Park,transport,0.249,0.284
+Udawalawe National Park,value,0.229,0.272
+Udawalawe National Park,view,0.335,0.353
+Victoria Park of Nuwara Eliya,amenities,0.258,0.304
+Victoria Park of Nuwara Eliya,cleanliness,0.17,0.27
+Victoria Park of Nuwara Eliya,crowd,0.143,0.21
+Victoria Park of Nuwara Eliya,food,0.352,0.376
+Victoria Park of Nuwara Eliya,location,0.227,0.254
+Victoria Park of Nuwara Eliya,safety,0.284,0.284
+Victoria Park of Nuwara Eliya,service,0.322,0.322
+Victoria Park of Nuwara Eliya,transport,0.234,0.242
+Victoria Park of Nuwara Eliya,value,0.116,0.195
+Victoria Park of Nuwara Eliya,view,0.465,0.484

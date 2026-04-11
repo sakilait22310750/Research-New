@@ -1,0 +1,5 @@
+# Optional: install only if you need real-time BERT sentiment prediction (/api/predict).
+# The app works fully without this (map, search, locations use the database).
+# Install after requirements.txt: pip install -r requirements-bert.txt
+transformers>=4.30.0
+torch>=2.0.0

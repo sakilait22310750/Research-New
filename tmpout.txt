@@ -1,0 +1,14 @@
+﻿COLUMNS: ['user_id', 'user_country', 'user_age_group', 'user_travel_frequency', 'user_travel_purpose', 'user_preferences', 'hotel_name', 'hotel_rating', 'hotel_location', 'rating', 'tripType', 'language', 'review_text', 'rating_norm', 'sentiment_label', 'sentiment_score', 'emotion_label', 'emotion_score', 'sentiment_value', 'emotion_anger', 'emotion_disgust', 'emotion_fear', 'emotion_joy', 'emotion_neutral', 'emotion_sadness', 'emotion_surprise', 'hotel_id']
+SHAPE: (3652, 27)
+SAMPLE:
+            hotel_name sentiment_label
+0  Heritance Ahungalla        positive
+1  Heritance Ahungalla        positive
+2  Heritance Ahungalla         neutral
+3  Heritance Ahungalla        positive
+4  Heritance Ahungalla        positive
+5  Heritance Ahungalla        positive
+6  Heritance Ahungalla        positive
+7  Heritance Ahungalla        positive
+8  Heritance Ahungalla        positive
+9  Heritance Ahungalla        positive

@@ -1,0 +1,10 @@
+# Simplified requirements without strict version pinning
+# This allows pip to find compatible pre-built wheels
+flask
+flask-cors
+pandas
+numpy
+transformers
+torch
+safetensors
+

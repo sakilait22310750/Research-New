@@ -1,0 +1,956 @@
+[
+  {
+    "hotel_id": 0,
+    "name": "Aditya Resort",
+    "total": 48,
+    "pos_pct": 96,
+    "neu_pct": 0,
+    "neg_pct": 4,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 1,
+    "name": "Amaranthe Bay Resort",
+    "total": 56,
+    "pos_pct": 80,
+    "neu_pct": 15,
+    "neg_pct": 5,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 2,
+    "name": "Amaya Hills Kandy",
+    "total": 58,
+    "pos_pct": 93,
+    "neu_pct": 5,
+    "neg_pct": 2,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 3,
+    "name": "Anantamaa",
+    "total": 10,
+    "pos_pct": 70,
+    "neu_pct": 20,
+    "neg_pct": 10,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 4,
+    "name": "Asian Jewel Boutique Hotel",
+    "total": 6,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 5,
+    "name": "Ayana Sea",
+    "total": 6,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 6,
+    "name": "Ayurveda Paragon",
+    "total": 2,
+    "pos_pct": 50,
+    "neu_pct": 50,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 7,
+    "name": "Belmont Boutique Hotel",
+    "total": 15,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 8,
+    "name": "Birds Resort Hambantota",
+    "total": 27,
+    "pos_pct": 89,
+    "neu_pct": 4,
+    "neg_pct": 7,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 9,
+    "name": "Blue Beach Wadduwa",
+    "total": 1,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 10,
+    "name": "Camelot Beach Hotel",
+    "total": 56,
+    "pos_pct": 84,
+    "neu_pct": 5,
+    "neg_pct": 11,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 11,
+    "name": "Cinnamon Citadel Kandy",
+    "total": 106,
+    "pos_pct": 91,
+    "neu_pct": 6,
+    "neg_pct": 3,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 12,
+    "name": "Cinnamon Wild Yala",
+    "total": 55,
+    "pos_pct": 87,
+    "neu_pct": 6,
+    "neg_pct": 7,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 13,
+    "name": "Citrus Hikkaduwa",
+    "total": 49,
+    "pos_pct": 71,
+    "neu_pct": 13,
+    "neg_pct": 16,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 14,
+    "name": "Club Waskaduwa Beach Resort & Spa",
+    "total": 13,
+    "pos_pct": 31,
+    "neu_pct": 15,
+    "neg_pct": 54,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 15,
+    "name": "Coco Royal Beach Resort",
+    "total": 44,
+    "pos_pct": 75,
+    "neu_pct": 18,
+    "neg_pct": 7,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 16,
+    "name": "Coconut Beach Lodge",
+    "total": 2,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 3.5
+  },
+  {
+    "hotel_id": 17,
+    "name": "Coral Rock By Bansei",
+    "total": 20,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 18,
+    "name": "Deer Park Hotel",
+    "total": 42,
+    "pos_pct": 88,
+    "neu_pct": 7,
+    "neg_pct": 5,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 19,
+    "name": "Ekho Lake House",
+    "total": 39,
+    "pos_pct": 92,
+    "neu_pct": 8,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 20,
+    "name": "Elysium",
+    "total": 2,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 21,
+    "name": "Era Beach",
+    "total": 2,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 22,
+    "name": "Fresh Wave Mirissa",
+    "total": 9,
+    "pos_pct": 78,
+    "neu_pct": 22,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 23,
+    "name": "Giritale Hotel",
+    "total": 9,
+    "pos_pct": 67,
+    "neu_pct": 22,
+    "neg_pct": 11,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 24,
+    "name": "Golden Beach Cottages",
+    "total": 4,
+    "pos_pct": 75,
+    "neu_pct": 25,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 25,
+    "name": "Grand Serendib Hotel",
+    "total": 57,
+    "pos_pct": 89,
+    "neu_pct": 9,
+    "neg_pct": 2,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 26,
+    "name": "Heritage Hotel Anuradhapura",
+    "total": 64,
+    "pos_pct": 97,
+    "neu_pct": 3,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 27,
+    "name": "Heritance Ahungalla",
+    "total": 73,
+    "pos_pct": 92,
+    "neu_pct": 8,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 28,
+    "name": "Heritance Kandalama",
+    "total": 64,
+    "pos_pct": 89,
+    "neu_pct": 9,
+    "neg_pct": 2,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 29,
+    "name": "Hibiscus Beach Hotel",
+    "total": 4,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 3.5
+  },
+  {
+    "hotel_id": 30,
+    "name": "Hikka Tranz by Cinnamon",
+    "total": 46,
+    "pos_pct": 89,
+    "neu_pct": 9,
+    "neg_pct": 2,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 31,
+    "name": "Hilton Yala Resort",
+    "total": 53,
+    "pos_pct": 87,
+    "neu_pct": 11,
+    "neg_pct": 2,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 32,
+    "name": "Hotel Alakamanda",
+    "total": 6,
+    "pos_pct": 33,
+    "neu_pct": 34,
+    "neg_pct": 33,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 33,
+    "name": "Hotel Goldi Sands",
+    "total": 56,
+    "pos_pct": 96,
+    "neu_pct": 4,
+    "neg_pct": 0,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 34,
+    "name": "Hotel J Negombo",
+    "total": 25,
+    "pos_pct": 76,
+    "neu_pct": 16,
+    "neg_pct": 8,
+    "rating": 3.5
+  },
+  {
+    "hotel_id": 35,
+    "name": "Hotel Riu Sri Lanka",
+    "total": 64,
+    "pos_pct": 77,
+    "neu_pct": 18,
+    "neg_pct": 5,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 36,
+    "name": "Hotel Sudu Araliya",
+    "total": 17,
+    "pos_pct": 71,
+    "neu_pct": 5,
+    "neg_pct": 24,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 37,
+    "name": "Jade Green Hambantota",
+    "total": 1,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 38,
+    "name": "Jetwing Ayurveda Pavilions",
+    "total": 22,
+    "pos_pct": 91,
+    "neu_pct": 9,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 39,
+    "name": "Jetwing Beach",
+    "total": 57,
+    "pos_pct": 93,
+    "neu_pct": 5,
+    "neg_pct": 2,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 40,
+    "name": "Jetwing Blue",
+    "total": 57,
+    "pos_pct": 95,
+    "neu_pct": 3,
+    "neg_pct": 2,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 41,
+    "name": "Jetwing Lagoon",
+    "total": 54,
+    "pos_pct": 98,
+    "neu_pct": 0,
+    "neg_pct": 2,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 42,
+    "name": "Jetwing Lake",
+    "total": 58,
+    "pos_pct": 90,
+    "neu_pct": 10,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 43,
+    "name": "Jetwing Sea",
+    "total": 56,
+    "pos_pct": 91,
+    "neu_pct": 7,
+    "neg_pct": 2,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 44,
+    "name": "Jetwing Surf",
+    "total": 37,
+    "pos_pct": 92,
+    "neu_pct": 8,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 45,
+    "name": "Jetwing Yala",
+    "total": 57,
+    "pos_pct": 74,
+    "neu_pct": 12,
+    "neg_pct": 14,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 46,
+    "name": "Jie Jie Beach by Jetwing",
+    "total": 81,
+    "pos_pct": 91,
+    "neu_pct": 4,
+    "neg_pct": 5,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 47,
+    "name": "Jkab Beach Resort",
+    "total": 9,
+    "pos_pct": 44,
+    "neu_pct": 0,
+    "neg_pct": 56,
+    "rating": 3.5
+  },
+  {
+    "hotel_id": 48,
+    "name": "Kalundewa Retreat",
+    "total": 43,
+    "pos_pct": 81,
+    "neu_pct": 19,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 49,
+    "name": "Kottukal Beach House By Jetwing",
+    "total": 4,
+    "pos_pct": 75,
+    "neu_pct": 25,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 50,
+    "name": "Kulu Safaris Sri Lanka",
+    "total": 22,
+    "pos_pct": 95,
+    "neu_pct": 5,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 51,
+    "name": "La Maison Nil Manel",
+    "total": 3,
+    "pos_pct": 67,
+    "neu_pct": 33,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 52,
+    "name": "Laya Safari",
+    "total": 17,
+    "pos_pct": 76,
+    "neu_pct": 0,
+    "neg_pct": 24,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 53,
+    "name": "Liyya Water Villas",
+    "total": 74,
+    "pos_pct": 91,
+    "neu_pct": 6,
+    "neg_pct": 3,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 54,
+    "name": "Mahaweli Reach Hotel",
+    "total": 57,
+    "pos_pct": 95,
+    "neu_pct": 0,
+    "neg_pct": 5,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 55,
+    "name": "Mahoora Tented Safari Camp Yala",
+    "total": 41,
+    "pos_pct": 78,
+    "neu_pct": 7,
+    "neg_pct": 15,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 56,
+    "name": "Mandara Resort",
+    "total": 55,
+    "pos_pct": 80,
+    "neu_pct": 9,
+    "neg_pct": 11,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 57,
+    "name": "Mermaid Hotel & Club",
+    "total": 102,
+    "pos_pct": 88,
+    "neu_pct": 4,
+    "neg_pct": 8,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 58,
+    "name": "Morning Star Resorts",
+    "total": 8,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 59,
+    "name": "Nice Place Hotel",
+    "total": 21,
+    "pos_pct": 90,
+    "neu_pct": 5,
+    "neg_pct": 5,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 60,
+    "name": "Oak Ray Haridra Beach Resort",
+    "total": 33,
+    "pos_pct": 76,
+    "neu_pct": 18,
+    "neg_pct": 6,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 61,
+    "name": "Occidental Paradise Dambulla",
+    "total": 61,
+    "pos_pct": 87,
+    "neu_pct": 10,
+    "neg_pct": 3,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 62,
+    "name": "Owl and the Pussycat Hotel",
+    "total": 11,
+    "pos_pct": 45,
+    "neu_pct": 28,
+    "neg_pct": 27,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 63,
+    "name": "Palm Villa Mirissa",
+    "total": 3,
+    "pos_pct": 33,
+    "neu_pct": 0,
+    "neg_pct": 67,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 64,
+    "name": "Paradise Beach Club",
+    "total": 12,
+    "pos_pct": 50,
+    "neu_pct": 17,
+    "neg_pct": 33,
+    "rating": 3.5
+  },
+  {
+    "hotel_id": 65,
+    "name": "Peacock Beach Resort and Spa",
+    "total": 15,
+    "pos_pct": 47,
+    "neu_pct": 20,
+    "neg_pct": 33,
+    "rating": 3.0
+  },
+  {
+    "hotel_id": 66,
+    "name": "Pelwehera Village Resort",
+    "total": 34,
+    "pos_pct": 91,
+    "neu_pct": 3,
+    "neg_pct": 6,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 67,
+    "name": "Rajarata Hotel Anuradapura",
+    "total": 70,
+    "pos_pct": 86,
+    "neu_pct": 8,
+    "neg_pct": 6,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 68,
+    "name": "Randiya Sea View Hotel",
+    "total": 20,
+    "pos_pct": 70,
+    "neu_pct": 20,
+    "neg_pct": 10,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 69,
+    "name": "Rangiri Dambulla Resort",
+    "total": 34,
+    "pos_pct": 94,
+    "neu_pct": 6,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 70,
+    "name": "Reef Villa & Spa",
+    "total": 1,
+    "pos_pct": 0,
+    "neu_pct": 0,
+    "neg_pct": 100,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 71,
+    "name": "Regenta Arie Lagoon",
+    "total": 27,
+    "pos_pct": 78,
+    "neu_pct": 11,
+    "neg_pct": 11,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 72,
+    "name": "Riff Hikkaduwa",
+    "total": 32,
+    "pos_pct": 91,
+    "neu_pct": 6,
+    "neg_pct": 3,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 73,
+    "name": "Roman Beach",
+    "total": 18,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 74,
+    "name": "Royal Palms Beach Hotel",
+    "total": 87,
+    "pos_pct": 83,
+    "neu_pct": 16,
+    "neg_pct": 1,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 75,
+    "name": "Sentido Heritance Negombo",
+    "total": 57,
+    "pos_pct": 96,
+    "neu_pct": 2,
+    "neg_pct": 2,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 76,
+    "name": "Serene Pavilions",
+    "total": 38,
+    "pos_pct": 92,
+    "neu_pct": 3,
+    "neg_pct": 5,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 77,
+    "name": "Seyara Holiday Resort",
+    "total": 5,
+    "pos_pct": 80,
+    "neu_pct": 20,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 78,
+    "name": "Shangri-La Hambantota",
+    "total": 60,
+    "pos_pct": 92,
+    "neu_pct": 5,
+    "neg_pct": 3,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 79,
+    "name": "Sielen Diva",
+    "total": 15,
+    "pos_pct": 93,
+    "neu_pct": 7,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 80,
+    "name": "Sigiriana Resort",
+    "total": 12,
+    "pos_pct": 83,
+    "neu_pct": 17,
+    "neg_pct": 0,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 81,
+    "name": "Suite Lanka",
+    "total": 25,
+    "pos_pct": 84,
+    "neu_pct": 16,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 82,
+    "name": "Sundaras Resort & Spa",
+    "total": 18,
+    "pos_pct": 61,
+    "neu_pct": 39,
+    "neg_pct": 0,
+    "rating": 4.0
+  },
+  {
+    "hotel_id": 83,
+    "name": "Tangerine Beach Hotel",
+    "total": 98,
+    "pos_pct": 83,
+    "neu_pct": 10,
+    "neg_pct": 7,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 84,
+    "name": "Taprobana Wadduwa By Asia Leisure",
+    "total": 2,
+    "pos_pct": 0,
+    "neu_pct": 100,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 85,
+    "name": "The Blue Water",
+    "total": 76,
+    "pos_pct": 87,
+    "neu_pct": 12,
+    "neg_pct": 1,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 86,
+    "name": "The Blue Wave Hotel",
+    "total": 15,
+    "pos_pct": 60,
+    "neu_pct": 13,
+    "neg_pct": 27,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 87,
+    "name": "The Frangipani Tree by Edwards Collection",
+    "total": 14,
+    "pos_pct": 79,
+    "neu_pct": 14,
+    "neg_pct": 7,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 88,
+    "name": "The Lake Forest Hotel",
+    "total": 41,
+    "pos_pct": 76,
+    "neu_pct": 14,
+    "neg_pct": 10,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 89,
+    "name": "The Oasis Ayurveda Beach Resort",
+    "total": 7,
+    "pos_pct": 71,
+    "neu_pct": 29,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 90,
+    "name": "The Plantation Villa",
+    "total": 5,
+    "pos_pct": 80,
+    "neu_pct": 20,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 91,
+    "name": "The Residence Hikkaduwa",
+    "total": 29,
+    "pos_pct": 86,
+    "neu_pct": 14,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 92,
+    "name": "The Spice House, Mirissa",
+    "total": 12,
+    "pos_pct": 83,
+    "neu_pct": 17,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 93,
+    "name": "The Spice Trail",
+    "total": 22,
+    "pos_pct": 82,
+    "neu_pct": 13,
+    "neg_pct": 5,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 94,
+    "name": "The Villas Wadduwa",
+    "total": 52,
+    "pos_pct": 73,
+    "neu_pct": 12,
+    "neg_pct": 15,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 95,
+    "name": "Tishan Holiday Resort",
+    "total": 1,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 96,
+    "name": "Trinco Blu By Cinnamon",
+    "total": 57,
+    "pos_pct": 77,
+    "neu_pct": 16,
+    "neg_pct": 7,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 97,
+    "name": "Turyaa Kalutara by Aitken Spence Hotels",
+    "total": 83,
+    "pos_pct": 86,
+    "neu_pct": 1,
+    "neg_pct": 13,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 98,
+    "name": "Uga Chena Huts",
+    "total": 61,
+    "pos_pct": 92,
+    "neu_pct": 6,
+    "neg_pct": 2,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 99,
+    "name": "Unknown Hotel",
+    "total": 83,
+    "pos_pct": 88,
+    "neu_pct": 5,
+    "neg_pct": 7,
+    "rating": NaN
+  },
+  {
+    "hotel_id": 100,
+    "name": "Villa Saffron Hikkaduwa",
+    "total": 18,
+    "pos_pct": 89,
+    "neu_pct": 5,
+    "neg_pct": 6,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 101,
+    "name": "Whisky Point Resort",
+    "total": 20,
+    "pos_pct": 90,
+    "neu_pct": 10,
+    "neg_pct": 0,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 102,
+    "name": "White Villa Resort",
+    "total": 1,
+    "pos_pct": 100,
+    "neu_pct": 0,
+    "neg_pct": 0,
+    "rating": 4.5
+  },
+  {
+    "hotel_id": 103,
+    "name": "Wild Coast Tented Lodge - Relais & Chateaux",
+    "total": 38,
+    "pos_pct": 74,
+    "neu_pct": 23,
+    "neg_pct": 3,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 104,
+    "name": "Yala Safari Camping",
+    "total": 55,
+    "pos_pct": 91,
+    "neu_pct": 7,
+    "neg_pct": 2,
+    "rating": 5.0
+  },
+  {
+    "hotel_id": 105,
+    "name": NaN,
+    "total": 28,
+    "pos_pct": 71,
+    "neu_pct": 18,
+    "neg_pct": 11,
+    "rating": NaN
+  }
+]
