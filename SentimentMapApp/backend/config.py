@@ -20,16 +20,26 @@ class Config:
     SQLALCHEMY_ECHO = os.getenv('SQL_DEBUG', 'False').lower() == 'true'
     
     # Image Storage Configuration
-    IMAGE_STORAGE_MODE = os.getenv('IMAGE_STORAGE_MODE', 'local')  # 'local' or 'cloud'
+    # Supported modes: 'local' (default), 'drive' (Google Drive proxy), 'cloud' (CDN)
+    IMAGE_STORAGE_MODE = os.getenv('IMAGE_STORAGE_MODE', 'local')
     
     # Local image storage (development)
     IMAGES_PATH = os.getenv('IMAGES_PATH', str(BASE_DIR / 'images'))
     LOCAL_IMAGES_DIR = Path(IMAGES_PATH)
     
-    # Cloud storage configuration (production)
+    # Cloud storage configuration (production with CDN)
     CLOUD_BUCKET_NAME = os.getenv('CLOUD_BUCKET_NAME', '')
     CLOUD_CDN_URL = os.getenv('CLOUD_CDN_URL', '')
     CLOUD_REGION = os.getenv('CLOUD_REGION', 'us-east-1')
+    
+    # Google Drive configuration (for IMAGE_STORAGE_MODE='drive')
+    GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', '')
+    GOOGLE_DRIVE_FOLDER_ID = os.getenv('GOOGLE_DRIVE_FOLDER_ID', '')
+    # Pre-generated mapping file: location_name → {filename → drive_file_id}
+    DRIVE_MAPPING_FILE = BACKEND_DIR / 'drive_mapping.json'
+    # In-memory image cache settings
+    DRIVE_CACHE_TTL = int(os.getenv('DRIVE_CACHE_TTL', '3600'))         # seconds (1 hour)
+    DRIVE_MAX_CACHE_ITEMS = int(os.getenv('DRIVE_MAX_CACHE_ITEMS', '300'))
     
     # Image optimization
     IMAGE_QUALITY = int(os.getenv('IMAGE_QUALITY', '85'))
@@ -43,7 +53,7 @@ class Config:
     
     # Data directories (CSV backup files)
     DATA_DIR = BASE_DIR / 'data'
-    MODEL_DIR = BASE_DIR.parent / 'bert_gpu_optimized'
+    MODEL_DIR = BASE_DIR / 'bert_gpu_optimized'
     
     # Flask configuration
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')

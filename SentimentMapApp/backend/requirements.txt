@@ -6,3 +6,8 @@ pandas>=2.0.3
 numpy>=1.24.3,<2.0.0
 python-dotenv>=1.0.0
 google-generativeai
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+google-auth-httplib2>=0.2.0
+itsdangerous>=2.1.2
+werkzeug>=2.3.0

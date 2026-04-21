@@ -1,9 +1,9 @@
-﻿// API service for hotel recommendations
+// API service for hotel recommendations
 // Uses FastAPI backend (Research-main/backend/server.py) on port 8000.
 // On a physical device, set COMPUTER_IP to your PC's LAN IP (same WiFi as the phone).
 
 // const COMPUTER_IP = '192.168.1.4'; // Change to your PC's IP (e.g. ipconfig â†’ IPv4 Address)
-const COMPUTER_IP = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_COMPUTER_IP) || '172.20.10.2';
+const COMPUTER_IP = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_COMPUTER_IP) || '192.168.1.2';
 const getHotelApiBaseUrl = () => {
   if (__DEV__) {
     const Platform = require('react-native').Platform;

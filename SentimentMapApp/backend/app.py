@@ -25,6 +25,7 @@ from config import Config
 from models import db, Location, LocationImage, Aspect, Review, User
 from utils.db_utils import get_location_stats, search_locations, get_top_locations
 from utils.image_manager import ImageManager
+from utils.drive_image_service import load_drive_mapping, fetch_image as drive_fetch_image
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -42,6 +43,29 @@ image_manager = ImageManager(Config)
 # Ensure all tables exist (including users for auth)
 with app.app_context():
     db.create_all()
+
+# ── Google Drive image mapping + service (loaded once at startup) ─────────────
+# Only used when IMAGE_STORAGE_MODE=drive. Zero overhead in local/cloud mode.
+_drive_mapping = {}
+_drive_semaphore = None   # limits concurrent Drive downloads
+
+if Config.IMAGE_STORAGE_MODE == 'drive':
+    import threading
+    logger.info("[Drive] IMAGE_STORAGE_MODE=drive — loading Drive mapping...")
+    _drive_mapping = load_drive_mapping(Config.DRIVE_MAPPING_FILE)
+    if not _drive_mapping:
+        logger.warning(
+            "[Drive] ⚠️  Drive mapping is empty! "
+            "Run: python drive_scan.py --folder-id YOUR_ID --credentials path/to/key.json"
+        )
+    else:
+        logger.info(f"[Drive] ✅ Ready to serve images from Google Drive ({len(_drive_mapping)} locations)")
+        # Pre-initialize Drive API service NOW (at startup, not lazily on first request)
+        # This prevents concurrent initialization race conditions under load.
+        from utils.drive_image_service import _get_drive_service
+        _get_drive_service(Config.GOOGLE_APPLICATION_CREDENTIALS)
+        # Limit concurrent Drive downloads to avoid overwhelming the API
+        _drive_semaphore = threading.Semaphore(5)
 
 # Auth token serializer (uses Flask SECRET_KEY)
 def _auth_serializer():
@@ -620,25 +644,79 @@ def search_locations_endpoint():
 
 @app.route('/api/images/<path:image_path>', methods=['GET'])
 def serve_image(image_path):
-    """Serve images from the images directory"""
+    """
+    Serve images from local disk OR Google Drive, transparently.
+
+    The IMAGE_STORAGE_MODE env var controls the source:
+      - 'local' (default): serve from IMAGES_DIR on disk
+      - 'drive':           proxy from Google Drive via Drive API + in-memory cache
+      - 'cloud':           redirect to cloud CDN URL
+    """
+    decoded_path = urllib.parse.unquote(image_path)
+
+    # ── Google Drive mode ─────────────────────────────────────────────────────
+    if Config.IMAGE_STORAGE_MODE == 'drive':
+        # Expect path format: "Location Name/filename.jpg"
+        parts = decoded_path.split('/', 1)
+        if len(parts) != 2:
+            return jsonify({'error': 'Invalid image path — expected LocationName/filename.jpg'}), 400
+        location_name, filename = parts[0], parts[1]
+
+        try:
+            # Use semaphore to cap concurrent Drive downloads (prevents API overload)
+            sem = _drive_semaphore
+            if sem:
+                sem.acquire()
+            try:
+                result = drive_fetch_image(
+                    credentials_path=Config.GOOGLE_APPLICATION_CREDENTIALS,
+                    mapping=_drive_mapping,
+                    location_name=location_name,
+                    filename=filename,
+                    cache_ttl=Config.DRIVE_CACHE_TTL,
+                    max_cache_items=Config.DRIVE_MAX_CACHE_ITEMS,
+                )
+            finally:
+                if sem:
+                    sem.release()
+
+            if result is None:
+                return jsonify({
+                    'error': f'Image not found in Google Drive: {decoded_path}',
+                }), 404
+
+            from flask import Response
+            image_bytes, mime_type = result
+            return Response(
+                image_bytes,
+                mimetype=mime_type,
+                headers={
+                    'Cache-Control': 'public, max-age=86400',
+                    'Content-Length': str(len(image_bytes)),
+                    'X-Image-Source': 'google-drive',
+                }
+            )
+        except BaseException as e:
+            logger.error(f"[Drive] ❌ Unexpected error serving '{decoded_path}': {type(e).__name__}: {e}")
+            return jsonify({'error': 'Image temporarily unavailable'}), 503
+
+
+    # ── Local mode (original behaviour) ──────────────────────────────────────
     try:
-        decoded_path = urllib.parse.unquote(image_path)
-        
         if not IMAGES_DIR.exists():
             return jsonify({'error': 'Images directory not found'}), 404
-        
+
         image_file = IMAGES_DIR / decoded_path
-        
-        # Security check
+
+        # Security: prevent path traversal
         try:
             image_file.resolve().relative_to(IMAGES_DIR.resolve())
         except ValueError:
             return jsonify({'error': 'Invalid image path'}), 403
-        
+
         if image_file.exists() and image_file.is_file():
             return send_from_directory(str(IMAGES_DIR), decoded_path)
-        else:
-            return jsonify({'error': 'Image not found'}), 404
+        return jsonify({'error': 'Image not found'}), 404
     except Exception as e:
         logger.error(f"Error serving image: {e}")
         return jsonify({'error': str(e)}), 500
@@ -742,7 +820,7 @@ if __name__ == '__main__':
         logger.info("=" * 60)
         logger.info("")
         
-        app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+        app.run(host='0.0.0.0', port=5000, debug=Config.DEBUG, use_reloader=False, threaded=True)
         
     except KeyboardInterrupt:
         logger.info("\n\nServer stopped by user")

@@ -1,4 +1,4 @@
-﻿
+
 /**
  * API Service for connecting to the backend server
  * Replaces direct file reading with HTTP API calls
@@ -14,7 +14,7 @@
 
 // Set your computer's IP address here for physical device testing (ipconfig Ã¢â€ â€™ IPv4)
 // DO NOT use 192.168.56.1 (VirtualBox/VMware). Use your WiFi/Ethernet IP.
-const COMPUTER_IP = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_COMPUTER_IP) || '172.20.10.2';
+const COMPUTER_IP = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_COMPUTER_IP) || '192.168.1.2';
 
 const getApiBaseUrl = () => {
   if (__DEV__) {
