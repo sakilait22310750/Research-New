@@ -3,29 +3,24 @@
 // On a physical device, set COMPUTER_IP to your PC's LAN IP (same WiFi as the phone).
 
 // const COMPUTER_IP = '192.168.1.4'; // Change to your PC's IP (e.g. ipconfig â†’ IPv4 Address)
-const COMPUTER_IP = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_COMPUTER_IP) || '192.168.1.2';
+const COMPUTER_IP = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_COMPUTER_IP) || '172.20.10.2';
 const getHotelApiBaseUrl = () => {
+  // Use your new Railway URL
+  const RAILWAY_URL = 'https://web-production-7afd.up.railway.app/api';
+
   if (__DEV__) {
     const Platform = require('react-native').Platform;
 
+    // For web development, you can still use localhost if running locally, 
+    // but Railway works for all platforms.
     if (Platform.OS === 'web') {
-      return 'http://localhost:8000/api';
+      return RAILWAY_URL;
     }
 
-    // On device/emulator, use your computer's IP so the app can reach the backend
-    if (Platform.OS === 'android') {
-      return `http://${COMPUTER_IP}:8000/api`;
-    }
-
-    if (Platform.OS === 'ios') {
-      // Simulator can use localhost; physical device must use COMPUTER_IP
-      return `http://${COMPUTER_IP}:8000/api`;
-    }
-
-    return `http://${COMPUTER_IP}:8000/api`;
+    return RAILWAY_URL;
   }
 
-  return 'http://your-server-ip:8000/api';
+  return RAILWAY_URL;
 };
 
 const HOTEL_API_BASE_URL = getHotelApiBaseUrl();
