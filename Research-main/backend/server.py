@@ -757,7 +757,7 @@ async def get_hotels(location: Optional[str] = None, min_rating: Optional[float]
         query['rating'] = {"$gte": min_rating}
     
     hotels = await db.hotels.find(query).limit(limit).to_list(limit)
-    base_url = os.environ.get("BACKEND_URL", "http://localhost:8000")
+    base_url = os.environ.get("BACKEND_URL", "http://localhost:8000").strip().rstrip('/')
     
     return [
         {
@@ -792,7 +792,7 @@ async def search_hotels_suggestions(q: str = "", limit: int = 8):
         ]
     }
     hotels = await db.hotels.find(query).limit(limit).to_list(limit)
-    base_url = os.environ.get("BACKEND_URL", "http://localhost:8000")
+    base_url = os.environ.get("BACKEND_URL", "http://localhost:8000").strip().rstrip('/')
     return [
         {
             "hotel_id":  h["hotel_id"],
@@ -1392,30 +1392,68 @@ drive_executor = ThreadPoolExecutor(max_workers=5)
 # Google Drive API setup
 def get_drive_service():
     """
-    Initialize and return Google Drive API service
-    Supports Service Account authentication (recommended for server-to-server)
+    Initialize and return Google Drive API service.
+    Priority:
+    1. GOOGLE_DRIVE_API_KEY (simplest - no JWT, works with public folders)
+    2. GOOGLE_CREDENTIALS_BASE64 (base64-encoded service account JSON)
+    3. GOOGLE_CREDENTIALS_JSON (raw JSON string)
+    4. Local service-account-key.json file
     """
     try:
-        # Service Account authentication
-        # Set GOOGLE_APPLICATION_CREDENTIALS env var to path of service account JSON
-        credentials_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-        if credentials_path and os.path.exists(credentials_path):
+        # 1. API Key approach (no JWT - most reliable for public folders)
+        api_key = os.environ.get('GOOGLE_DRIVE_API_KEY')
+        if api_key:
+            service = build('drive', 'v3', developerKey=api_key)
+            logger.info("✅ Google Drive initialized with API key (no JWT)")
+            return service
+
+        # 2. Base64-encoded service account JSON
+        creds_b64 = os.environ.get('GOOGLE_CREDENTIALS_BASE64')
+        if creds_b64:
+            import base64
+            import json as _json
+            decoded = base64.b64decode(creds_b64).decode('utf-8')
+            info = _json.loads(decoded)
+            # Normalize private key line endings (fix Windows CRLF issues)
+            if 'private_key' in info:
+                info['private_key'] = info['private_key'].replace('\r\n', '\n').replace('\\n', '\n')
+            credentials = service_account.Credentials.from_service_account_info(
+                info, scopes=['https://www.googleapis.com/auth/drive.readonly']
+            )
+            logger.info("✅ Google Drive initialized with Base64 credentials")
+            return build('drive', 'v3', credentials=credentials)
+
+        # 3. Raw JSON string from environment
+        creds_json = os.environ.get('GOOGLE_CREDENTIALS_JSON')
+        if creds_json:
+            import json as _json
+            info = _json.loads(creds_json)
+            if 'private_key' in info:
+                info['private_key'] = info['private_key'].replace('\r\n', '\n').replace('\\n', '\n')
+            credentials = service_account.Credentials.from_service_account_info(
+                info, scopes=['https://www.googleapis.com/auth/drive.readonly']
+            )
+            logger.info("✅ Google Drive initialized with JSON credentials")
+            return build('drive', 'v3', credentials=credentials)
+
+        # 4. Local file
+        default_path = ROOT_DIR / 'service-account-key.json'
+        if default_path.exists():
             credentials = service_account.Credentials.from_service_account_file(
-                credentials_path,
+                str(default_path),
                 scopes=['https://www.googleapis.com/auth/drive.readonly']
             )
-            service = build('drive', 'v3', credentials=credentials)
-            return service
-        
-        # If no credentials found, return None
-        logger.warning("Google Drive credentials not found. Set GOOGLE_APPLICATION_CREDENTIALS environment variable.")
+            logger.info("✅ Google Drive initialized with local key file")
+            return build('drive', 'v3', credentials=credentials)
+
+        logger.warning("❌ No Google Drive credentials found")
         return None
-        
+
     except GoogleAuthError as e:
-        logger.error(f"Google Drive authentication error: {e}")
+        logger.error(f"❌ Google Drive auth error: {e}")
         return None
     except Exception as e:
-        logger.error(f"Error initializing Google Drive service: {e}")
+        logger.error(f"❌ Google Drive init error: {e}")
         return None
 
 def _find_hotel_folder_id_sync(drive_service, parent_folder_id: str, hotel_id: str) -> Optional[str]:
@@ -1635,19 +1673,14 @@ async def proxy_hotel_image(hotel_id: str, index: int = 1):
         StreamingResponse with image data
     """
     if not GOOGLE_DRIVE_AVAILABLE:
-        raise HTTPException(
-            status_code=501,
-            detail="Google Drive API not available"
-        )
+        return RedirectResponse(url=f"https://picsum.photos/seed/{hotel_id}/400/300")
     
     try:
         # Get Google Drive service
         drive_service = get_drive_service()
         if not drive_service:
-            raise HTTPException(
-                status_code=503,
-                detail="Google Drive service not available. Please configure GOOGLE_APPLICATION_CREDENTIALS."
-            )
+            # Graceful fallback: redirect to placeholder image
+            return RedirectResponse(url=f"https://picsum.photos/seed/{hotel_id}/400/300")
         
         # Find the hotel folder
         hotel_folder_id = await find_hotel_folder_id(drive_service, GOOGLE_DRIVE_FOLDER_ID, hotel_id)
@@ -1724,19 +1757,22 @@ async def list_hotel_images(hotel_id: str, request: Request):
         JSON with list of image URLs and count
     """
     if not GOOGLE_DRIVE_AVAILABLE:
-        raise HTTPException(
-            status_code=501,
-            detail="Google Drive API not available"
-        )
+        return {
+            "images": [{"url": f"https://picsum.photos/seed/{hotel_id}/400/300", "index": 1, "name": "placeholder.jpg"}],
+            "count": 1,
+            "hotel_id": hotel_id
+        }
     
     try:
         # Get Google Drive service
         drive_service = get_drive_service()
         if not drive_service:
-            raise HTTPException(
-                status_code=503,
-                detail="Google Drive service not available"
-            )
+            # Graceful fallback: return a placeholder image instead of crashing the app
+            return {
+                "images": [{"url": f"https://picsum.photos/seed/{hotel_id}/400/300", "index": 1, "name": "placeholder.jpg"}],
+                "count": 1,
+                "hotel_id": hotel_id
+            }
         
         # Find the hotel folder
         hotel_folder_id = await find_hotel_folder_id(drive_service, GOOGLE_DRIVE_FOLDER_ID, hotel_id)
