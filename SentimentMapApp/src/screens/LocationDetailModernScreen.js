@@ -51,6 +51,8 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('Overview');
   const [showAllGallery, setShowAllGallery] = useState(false);
+  const [userReviews, setUserReviews] = useState([]);
+  const [showWriteReview, setShowWriteReview] = useState(false);
   const [travelStats, setTravelStats] = useState({
     distanceKm: '--',
     weatherC: '--',
@@ -60,8 +62,22 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     setShowAllGallery(false);
+    setUserReviews([]);
     loadData();
+    loadUserReviews(location);
   }, [location]);
+
+  // Refresh user reviews (and therefore gallery) whenever this screen comes back into focus.
+  // This fires after returning from WriteReviewScreen after a successful submission.
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      const canonicalName = locationData?.location || location;
+      if (canonicalName) {
+        loadUserReviews(canonicalName);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, locationData?.location, location]);
 
   useEffect(() => {
     if (locationData?.location) {
@@ -111,6 +127,11 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
       }
 
       setReviews(loadedReviews);
+
+      // Also (re)load user reviews with the canonical name
+      const canonicalName =
+        detailsRes.status === 'fulfilled' ? detailsRes.value?.location || location : location;
+      loadUserReviews(canonicalName);
     } catch (error) {
       console.error('Error loading location details:', error);
       Alert.alert('Error', 'Failed to load location details.');
@@ -119,7 +140,28 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
     }
   };
 
-  const allImages = useMemo(() => locationData?.images || [], [locationData]);
+  const loadUserReviews = async (locationName) => {
+    try {
+      const data = await apiService.getUserReviews(locationName);
+      setUserReviews(Array.isArray(data) ? data : []);
+    } catch (err) {
+      // Non-fatal — user reviews are supplemental
+      console.warn('[UserReviews] Failed to load:', err?.message || err);
+    }
+  };
+
+  // Merge DB images with any user-uploaded photos from submitted reviews.
+  // userReviews is already in state so this updates automatically after submission
+  // without needing to re-fetch location details from the backend.
+  const allImages = useMemo(() => {
+    const base = locationData?.images || [];
+    const uploaded = userReviews.flatMap((ur) => ur.imageUrls || []);
+    const merged = [...base];
+    uploaded.forEach((url) => {
+      if (url && !merged.includes(url)) merged.push(url);
+    });
+    return merged;
+  }, [locationData, userReviews]);
   const gallerySourceImages = useMemo(
     () => (allImages.length > 1 ? allImages.slice(1) : allImages),
     [allImages]
@@ -797,7 +839,24 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
             </View>
           ) : (
             <View>
-              <Text style={styles.sectionTitle}>Reviews</Text>
+              {/* ── Write a Review Button ─────────────────────────── */}
+              <TouchableOpacity
+                style={styles.writeReviewBtn}
+                onPress={() =>
+                  navigation.navigate('WriteReview', {
+                    locationName: locationData?.location || location,
+                    onReviewSubmitted: () =>
+                      loadUserReviews(locationData?.location || location),
+                  })
+                }
+                activeOpacity={0.85}
+              >
+                <Ionicons name="create-outline" size={20} color="#ffffff" />
+                <Text style={styles.writeReviewBtnText}>Write a Review</Text>
+              </TouchableOpacity>
+
+              {/* ── Visitor Reviews (scraped) ─────────────────────── */}
+              <Text style={styles.sectionTitle}>Visitor Reviews</Text>
 
               {sarcasticReviews.length > 0 && (
                 <View style={styles.sarcasmBanner}>
@@ -813,7 +872,7 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
                     onPress={() => setShowSarcastic(!showSarcastic)}
                   >
                     <Text style={styles.sarcasmToggleBtnText}>
-                      {showSarcastic ? "Hide Sarcastic Reviews" : "View Sarcastic Reviews"}
+                      {showSarcastic ? 'Hide Sarcastic Reviews' : 'View Sarcastic Reviews'}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -822,14 +881,22 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
               {(() => {
                 const listToRender = showSarcastic ? sarcasticReviews : normalReviews;
                 if (listToRender.length === 0) {
-                  return <Text style={styles.sectionText}>No {showSarcastic ? 'sarcastic ' : ''}reviews found.</Text>;
+                  return (
+                    <Text style={styles.sectionText}>
+                      No {showSarcastic ? 'sarcastic ' : ''}reviews found.
+                    </Text>
+                  );
                 }
                 return listToRender.map((review, idx) => (
                   <View
                     key={`${review.reviewId || idx}`}
                     style={[
                       styles.reviewCard,
-                      showSarcastic ? styles.reviewCardSarcastic : (idx % 2 === 0 ? styles.reviewCardMint : styles.reviewCardBlue)
+                      showSarcastic
+                        ? styles.reviewCardSarcastic
+                        : idx % 2 === 0
+                          ? styles.reviewCardMint
+                          : styles.reviewCardBlue,
                     ]}
                   >
                     <View style={styles.reviewCardHeader}>
@@ -840,7 +907,11 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
                         {Array.from({ length: 5 }).map((_, starIdx) => (
                           <Ionicons
                             key={`star-${starIdx}`}
-                            name={starIdx < Math.round(getReviewRating(review, idx)) ? 'star' : 'star-outline'}
+                            name={
+                              starIdx < Math.round(getReviewRating(review, idx))
+                                ? 'star'
+                                : 'star-outline'
+                            }
                             size={16}
                             color="#eab308"
                           />
@@ -851,6 +922,98 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
                   </View>
                 ));
               })()}
+
+              {/* ── User-Submitted Reviews ────────────────────────── */}
+              {userReviews.length > 0 && (
+                <View style={styles.userReviewsSection}>
+                  <View style={styles.userReviewsHeader}>
+                    <Ionicons name="chatbubble-ellipses-outline" size={18} color="#3d9e8c" />
+                    <Text style={styles.userReviewsSectionTitle}>
+                      Traveller Reviews ({userReviews.length})
+                    </Text>
+                  </View>
+
+                  {userReviews.map((ur) => (
+                    <View key={`ur-${ur.id}`} style={styles.userReviewCard}>
+                      {/* Card header — avatar + name + stars */}
+                      <View style={styles.urCardHeader}>
+                        <View style={styles.urAvatarCircle}>
+                          <Ionicons name="person" size={16} color="#ffffff" />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.urReviewerName}>{ur.reviewerName}</Text>
+                          <View style={styles.urStarsRow}>
+                            {Array.from({ length: 5 }).map((_, si) => (
+                              <Ionicons
+                                key={`urs-${si}`}
+                                name={si < Math.round(ur.overallRating) ? 'star' : 'star-outline'}
+                                size={13}
+                                color="#f59e0b"
+                              />
+                            ))}
+                            <Text style={styles.urRatingValue}>
+                              {Number(ur.overallRating).toFixed(1)}
+                            </Text>
+                          </View>
+                        </View>
+                        {ur.recommends && (
+                          <View style={styles.urRecommendBadge}>
+                            <Ionicons name="thumbs-up" size={11} color="#3d9e8c" />
+                            <Text style={styles.urRecommendText}>Recommends</Text>
+                          </View>
+                        )}
+                      </View>
+
+                      {/* Title */}
+                      {!!ur.reviewTitle && (
+                        <Text style={styles.urTitle}>{ur.reviewTitle}</Text>
+                      )}
+
+                      {/* Review body */}
+                      {!!ur.reviewText && (
+                        <Text style={styles.urBody}>{ur.reviewText}</Text>
+                      )}
+
+                      {/* Aspect badges */}
+                      <View style={styles.urAspectRow}>
+                        <View style={styles.urAspectBadge}>
+                          <Text style={styles.urAspectLabel}>Ease of Access</Text>
+                          <Text style={styles.urAspectVal}>{ur.easeOfAccessRating}/5</Text>
+                        </View>
+                        <View style={styles.urAspectBadge}>
+                          <Text style={styles.urAspectLabel}>Facilities</Text>
+                          <Text style={styles.urAspectVal}>{ur.facilitiesRating}/5</Text>
+                        </View>
+                      </View>
+
+                      {/* Photo thumbnails */}
+                      {ur.imageUrls?.length > 0 && (
+                        <View style={styles.urPhotosRow}>
+                          {ur.imageUrls.map((imgUrl, pi) => (
+                            <Image
+                              key={`urp-${pi}`}
+                              source={{ uri: imgUrl }}
+                              style={styles.urPhotoThumb}
+                              resizeMode="cover"
+                            />
+                          ))}
+                        </View>
+                      )}
+
+                      {/* Date */}
+                      <Text style={styles.urDate}>
+                        {ur.createdAt
+                          ? new Date(ur.createdAt).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })
+                          : ''}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
           )}
         </View>
@@ -1527,6 +1690,163 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
   },
+
+  // ── Write Review Button ────────────────────────────────────────────────
+  writeReviewBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#13254eff',
+    borderRadius: 14,
+    paddingVertical: 15,
+    marginBottom: 20,
+    shadowColor: '#3d9e8c',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  writeReviewBtnText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+
+  // ── User Review Cards ──────────────────────────────────────────────────
+  userReviewsSection: {
+    marginTop: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    paddingTop: 18,
+  },
+  userReviewsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 14,
+  },
+  userReviewsSectionTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0c2340',
+  },
+  userReviewCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#e0f2f1',
+    shadowColor: '#3d9e8c',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  urCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 10,
+  },
+  urAvatarCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#3d9e8c',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  urReviewerName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0c2340',
+    marginBottom: 2,
+  },
+  urStarsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  urRatingValue: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#92400e',
+    marginLeft: 4,
+  },
+  urRecommendBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#f0fdf4',
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: '#a7f3d0',
+  },
+  urRecommendText: {
+    fontSize: 11,
+    color: '#065f46',
+    fontWeight: '600',
+  },
+  urTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#0c2340',
+    marginBottom: 6,
+  },
+  urBody: {
+    fontSize: 14,
+    color: '#334155',
+    lineHeight: 21,
+    marginBottom: 10,
+  },
+  urAspectRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 10,
+  },
+  urAspectBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  urAspectLabel: {
+    fontSize: 11,
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  urAspectVal: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0c2340',
+  },
+  urPhotosRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 8,
+  },
+  urPhotoThumb: {
+    width: 72,
+    height: 72,
+    borderRadius: 10,
+    backgroundColor: '#e5e7eb',
+  },
+  urDate: {
+    fontSize: 11,
+    color: '#9ca3af',
+    textAlign: 'right',
+    marginTop: 4,
+  },
 });
+
 
 export default LocationDetailModernScreen;

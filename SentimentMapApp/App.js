@@ -248,6 +248,7 @@ class App extends Component {
     let BookingDetailsScreen;
     let BookingGuestInfoScreen;
     let BookingConfirmationScreen;
+    let WriteReviewScreen;
     try {
       MainTabs = require('./src/navigation/MainTabs').default;
       HotelRecommendationsScreen = require('./src/screens/HotelRecommendationsScreen').default;
@@ -258,6 +259,7 @@ class App extends Component {
       BookingDetailsScreen = require('./src/screens/BookingDetailsScreen').default;
       BookingGuestInfoScreen = require('./src/screens/BookingGuestInfoScreen').default;
       BookingConfirmationScreen = require('./src/screens/BookingConfirmationScreen').default;
+      WriteReviewScreen = require('./src/screens/WriteReviewScreen').default;
     } catch (error) {
       if (__DEV__) {
         console.log('[App] Error loading authenticated screens:', error);
@@ -329,6 +331,11 @@ class App extends Component {
           name="BookingConfirmation"
           component={BookingConfirmationScreen}
           options={{ title: 'Confirmation' }}
+        />
+        <Stack.Screen
+          name="WriteReview"
+          component={WriteReviewScreen}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     );

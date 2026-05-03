@@ -191,6 +191,72 @@ class ApiService {
     });
   }
 
+  // ── User-submitted reviews ──────────────────────────────────────────────
+
+  /** Fetch all user-submitted reviews for a location */
+  async getUserReviews(locationName) {
+    return this.request(`/locations/${encodeURIComponent(locationName)}/user-reviews`);
+  }
+
+  /**
+   * Submit a new user review with optional photos.
+   *
+   * @param {string} locationName
+   * @param {{
+   *   reviewerName: string,
+   *   overallRating: number,
+   *   recommends: boolean,
+   *   easeOfAccess: number,
+   *   facilities: number,
+   *   reviewTitle: string,
+   *   reviewText: string,
+   *   photos: Array<{ uri: string, name: string, type: string }>
+   * }} reviewData
+   */
+  async submitUserReview(locationName, reviewData) {
+    const url = `${this.baseUrl}/locations/${encodeURIComponent(locationName)}/user-reviews`;
+
+    const formData = new FormData();
+    formData.append('reviewerName',  reviewData.reviewerName  || 'Anonymous');
+    formData.append('overallRating', String(reviewData.overallRating ?? 5));
+    formData.append('recommends',    reviewData.recommends ? 'true' : 'false');
+    formData.append('easeOfAccess',  String(reviewData.easeOfAccess ?? 3));
+    formData.append('facilities',    String(reviewData.facilities    ?? 3));
+    formData.append('reviewTitle',   reviewData.reviewTitle   || '');
+    formData.append('reviewText',    reviewData.reviewText    || '');
+
+    // Attach each photo as a file field named 'images[]'
+    (reviewData.photos || []).forEach((photo) => {
+      formData.append('images[]', {
+        uri:  photo.uri,
+        name: photo.name || 'photo.jpg',
+        type: photo.type || 'image/jpeg',
+      });
+    });
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000); // 30s for uploads
+
+    try {
+      const response = await fetch(url, {
+        method:  'POST',
+        headers: { 'Content-Type': 'multipart/form-data' },
+        body:    formData,
+        signal:  controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: 'Upload failed' }));
+        throw new Error(err.error || `HTTP ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      clearTimeout(timeout);
+      throw new Error(error.message || 'Failed to submit review');
+    }
+  }
+
   // Helper methods for compatibility with existing code
   normalizeSentiment(score) {
     // Convert -1 to 1 range to 0-100 percentage

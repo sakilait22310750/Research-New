@@ -22,7 +22,7 @@ load_dotenv()
 
 # Import database and models
 from config import Config
-from models import db, Location, LocationImage, Aspect, Review, User
+from models import db, Location, LocationImage, Aspect, Review, User, UserReview
 from utils.db_utils import get_location_stats, search_locations, get_top_locations
 from utils.image_manager import ImageManager
 from utils.drive_image_service import load_drive_mapping, fetch_image as drive_fetch_image
@@ -376,8 +376,17 @@ def get_location_details(location_name):
             for review in location.reviews.limit(5).all()
         ]
         
-        # Get images
+        # Get images (DB images + user-uploaded images)
         images = [img.get_url(base_url) for img in location.images.order_by(LocationImage.display_order).all()]
+
+        # Append any user-uploaded photos so they appear in the gallery
+        for ur in location.user_reviews.order_by('created_at').all():
+            for rel_path in ur.image_paths:
+                import urllib.parse
+                encoded = urllib.parse.quote(rel_path, safe='/')
+                url = f"{base_url}/api/images/{encoded}"
+                if url not in images:
+                    images.append(url)
         
         location_data.update({
             'aspects': aspects,
@@ -449,6 +458,131 @@ def get_location_reviews(location_name):
         return jsonify(reviews_data)
     except Exception as e:
         logger.error(f"Error getting location reviews from DB: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ── User-Submitted Reviews ────────────────────────────────────────────────────
+
+@app.route('/api/locations/<location_name>/user-reviews', methods=['GET'])
+def get_user_reviews(location_name):
+    """Return all user-submitted reviews for a location, newest first."""
+    try:
+        location = Location.query.filter_by(name=location_name).first()
+        if not location:
+            # Fuzzy fallback
+            from utils.db_utils import search_locations as _sl
+            results = _sl(location_name)
+            location = results[0] if results else None
+        if not location:
+            return jsonify([])
+
+        base_url = request.host_url.rstrip('/')
+        data = [
+            ur.to_dict(base_url=base_url)
+            for ur in location.user_reviews
+                .order_by(UserReview.created_at.desc())
+                .all()
+        ]
+        return jsonify(data)
+    except Exception as e:
+        logger.error(f"Error getting user reviews: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/locations/<location_name>/user-reviews', methods=['POST'])
+def submit_user_review(location_name):
+    """
+    Accept a new user review with optional photos.
+
+    Expects multipart/form-data with fields:
+      - reviewerName   (str, optional)
+      - overallRating  (float 1-5)
+      - recommends     (str 'true'/'false')
+      - easeOfAccess   (int 1-5)
+      - facilities     (int 1-5)
+      - reviewTitle    (str)
+      - reviewText     (str)
+      - images[]       (files, optional, up to 5)
+    """
+    try:
+        # Resolve location
+        location = Location.query.filter_by(name=location_name).first()
+        if not location:
+            from utils.db_utils import search_locations as _sl
+            results = _sl(location_name)
+            location = results[0] if results else None
+        if not location:
+            return jsonify({'error': f'Location not found: {location_name}'}), 404
+
+        # Parse form fields
+        form = request.form
+        reviewer_name = (form.get('reviewerName') or 'Anonymous').strip() or 'Anonymous'
+        overall_rating = max(1.0, min(5.0, float(form.get('overallRating', 5))))
+        recommends = str(form.get('recommends', 'true')).lower() == 'true'
+        ease_of_access = max(1, min(5, int(form.get('easeOfAccess', 3))))
+        facilities = max(1, min(5, int(form.get('facilities', 3))))
+        review_title = (form.get('reviewTitle') or '').strip()[:300]
+        review_text = (form.get('reviewText') or '').strip()
+
+        # Save uploaded images
+        saved_paths = []
+        uploaded_files = request.files.getlist('images[]')
+        if uploaded_files:
+            import uuid, os as _os
+            _ALLOWED_EXTS = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'}
+            _CT_TO_EXT = {
+                'image/jpeg': '.jpg', 'image/jpg': '.jpg',
+                'image/png': '.png', 'image/gif': '.gif',
+                'image/webp': '.webp', 'image/bmp': '.bmp',
+            }
+
+            for f in uploaded_files[:5]:  # cap at 5
+                if not f or not f.filename:
+                    continue
+
+                # Prefer the original file extension, fall back to Content-Type
+                orig_ext = _os.path.splitext(f.filename or '')[1].lower()
+                if orig_ext in _ALLOWED_EXTS:
+                    ext = orig_ext
+                else:
+                    ct = (f.content_type or '').split(';')[0].strip().lower()
+                    ext = _CT_TO_EXT.get(ct, '.jpg')
+
+                fname = uuid.uuid4().hex + ext
+
+                # Save to images/<LocationName>/user_uploads/
+                upload_dir = IMAGES_DIR / location.name / 'user_uploads'
+                upload_dir.mkdir(parents=True, exist_ok=True)
+                dest = upload_dir / fname
+                f.save(str(dest))
+
+                rel_path = f"{location.name}/user_uploads/{fname}"
+                saved_paths.append(rel_path)
+                logger.info(f"[UserReview] Saved image: {rel_path}")
+
+        # Persist review
+        ur = UserReview(
+            location_id=location.id,
+            location_name=location.name,
+            reviewer_name=reviewer_name,
+            overall_rating=overall_rating,
+            recommends=recommends,
+            ease_of_access_rating=ease_of_access,
+            facilities_rating=facilities,
+            review_title=review_title,
+            review_text=review_text,
+        )
+        ur.image_paths = saved_paths
+        db.session.add(ur)
+        db.session.commit()
+
+        base_url = request.host_url.rstrip('/')
+        logger.info(f"[UserReview] Saved review #{ur.id} for '{location.name}'")
+        return jsonify(ur.to_dict(base_url=base_url)), 201
+
+    except Exception as e:
+        logger.error(f"Error submitting user review: {e}")
+        import traceback; traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 
@@ -653,6 +787,28 @@ def serve_image(image_path):
       - 'cloud':           redirect to cloud CDN URL
     """
     decoded_path = urllib.parse.unquote(image_path)
+
+    # ── User-uploaded review photos: ALWAYS served from local disk ────────────
+    # These are saved under images/<LocationName>/user_uploads/ regardless of
+    # IMAGE_STORAGE_MODE — they are never uploaded to Google Drive.
+    if 'user_uploads' in decoded_path:
+        try:
+            if not IMAGES_DIR.exists():
+                return jsonify({'error': 'Images directory not found'}), 404
+            image_file = IMAGES_DIR / decoded_path
+            # Security: prevent path traversal
+            try:
+                image_file.resolve().relative_to(IMAGES_DIR.resolve())
+            except ValueError:
+                return jsonify({'error': 'Invalid image path'}), 403
+            if image_file.exists() and image_file.is_file():
+                logger.debug(f"[UserUpload] Serving: {decoded_path}")
+                return send_from_directory(str(IMAGES_DIR), decoded_path)
+            logger.warning(f"[UserUpload] Not found on disk: {decoded_path}")
+            return jsonify({'error': 'User upload not found'}), 404
+        except Exception as e:
+            logger.error(f"[UserUpload] Error serving '{decoded_path}': {e}")
+            return jsonify({'error': str(e)}), 500
 
     # ── Google Drive mode ─────────────────────────────────────────────────────
     if Config.IMAGE_STORAGE_MODE == 'drive':

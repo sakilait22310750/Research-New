@@ -1,9 +1,10 @@
 """
 Database Models for SentimentMap
-SQLAlchemy ORM models for locations, images, aspects, reviews, and users (auth)
+SQLAlchemy ORM models for locations, images, aspects, reviews, users (auth), and user-submitted reviews
 """
 
 from datetime import datetime
+import json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Index
 
@@ -61,6 +62,8 @@ class Location(db.Model):
                             cascade='all, delete-orphan', lazy='dynamic')
     reviews = db.relationship('Review', back_populates='location', 
                             cascade='all, delete-orphan', lazy='dynamic')
+    user_reviews = db.relationship('UserReview', back_populates='location',
+                                   cascade='all, delete-orphan', lazy='dynamic')
     
     def to_dict(self, include_images=False, include_aspects=False, base_url=''):
         """Convert location to dictionary for API responses"""
@@ -213,6 +216,80 @@ class Review(db.Model):
     
     def __repr__(self):
         return f'<Review {self.id} for {self.location.name}>'
+
+
+class UserReview(db.Model):
+    """User-submitted reviews via the mobile app (separate from scraped Review data)."""
+    __tablename__ = 'user_reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False, index=True)
+    location_name = db.Column(db.String(255), nullable=False)  # denormalised for fast queries
+
+    # Reviewer identity (anonymous by default)
+    reviewer_name = db.Column(db.String(255), default='Anonymous')
+
+    # Overall rating 1-5
+    overall_rating = db.Column(db.Float, nullable=False, default=5.0)
+
+    # Recommendation
+    recommends = db.Column(db.Boolean, default=True)
+
+    # Aspect ratings 1-5 (from the slider inputs)
+    ease_of_access_rating = db.Column(db.Integer, default=3)  # 1–5
+    facilities_rating = db.Column(db.Integer, default=3)       # 1–5
+
+    # Review content
+    review_title = db.Column(db.String(300))
+    review_text = db.Column(db.Text)
+
+    # Uploaded photo paths (JSON array of relative paths like
+    # 'Galle Fort/user_uploads/abc123.jpg')
+    image_paths_json = db.Column(db.Text, default='[]')
+
+    # Timestamp
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationship
+    location = db.relationship('Location', back_populates='user_reviews')
+
+    # ── helpers ────────────────────────────────────────────────────────────────
+
+    @property
+    def image_paths(self):
+        try:
+            return json.loads(self.image_paths_json or '[]')
+        except Exception:
+            return []
+
+    @image_paths.setter
+    def image_paths(self, paths):
+        self.image_paths_json = json.dumps(paths or [])
+
+    def to_dict(self, base_url=''):
+        """Serialise for API responses."""
+        image_urls = []
+        for rel_path in self.image_paths:
+            import urllib.parse
+            encoded = urllib.parse.quote(rel_path, safe='/')
+            image_urls.append(f"{base_url}/api/images/{encoded}")
+
+        return {
+            'id': self.id,
+            'locationName': self.location_name,
+            'reviewerName': self.reviewer_name or 'Anonymous',
+            'overallRating': self.overall_rating,
+            'recommends': self.recommends,
+            'easeOfAccessRating': self.ease_of_access_rating,
+            'facilitiesRating': self.facilities_rating,
+            'reviewTitle': self.review_title or '',
+            'reviewText': self.review_text or '',
+            'imageUrls': image_urls,
+            'createdAt': self.created_at.isoformat() if self.created_at else None,
+        }
+
+    def __repr__(self):
+        return f'<UserReview {self.id} by {self.reviewer_name} for {self.location_name}>'
 
 
 def init_db(app):
