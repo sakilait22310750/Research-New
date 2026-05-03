@@ -11,6 +11,7 @@ import {
   FlatList,
   Dimensions,
   PanResponder,
+  Linking,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -489,6 +490,49 @@ export default function HotelDetailScreen() {
                     size={18} 
                     color="#10b981" 
                   />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
+          {/* Contact & Info Section */}
+          {(hotelDetails?.google_maps_url || hotelDetails?.website || hotelDetails?.phone) && (
+            <View style={[styles.section, styles.contactSection]}>
+              <Text style={styles.sectionTitle}>Contact & Info</Text>
+
+              {hotelDetails?.google_maps_url && (
+                <TouchableOpacity
+                  style={styles.contactRow}
+                  onPress={() => Linking.openURL(hotelDetails.google_maps_url)}
+                >
+                  <Ionicons name="map-outline" size={22} color="#2563eb" />
+                  <Text style={styles.contactLink}>Open in Google Maps</Text>
+                </TouchableOpacity>
+              )}
+
+              {hotelDetails?.website && (
+                <TouchableOpacity
+                  style={styles.contactRow}
+                  onPress={() => Linking.openURL(
+                    hotelDetails.website.startsWith('http')
+                      ? hotelDetails.website
+                      : `https://${hotelDetails.website}`
+                  )}
+                >
+                  <Ionicons name="globe-outline" size={22} color="#2563eb" />
+                  <Text style={styles.contactLink} numberOfLines={1}>
+                    {hotelDetails.website.replace(/^https?:\/\//, '')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              {hotelDetails?.phone && (
+                <TouchableOpacity
+                  style={styles.contactRow}
+                  onPress={() => Linking.openURL(`tel:${hotelDetails.phone}`)}
+                >
+                  <Ionicons name="call-outline" size={22} color="#2563eb" />
+                  <Text style={styles.contactLink}>{hotelDetails.phone}</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -972,6 +1016,32 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#10b981',
     fontWeight: '600',
+  },
+  contactSection: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  contactLink: {
+    fontSize: 15,
+    color: '#2563eb',
+    fontWeight: '500',
+    flex: 1,
   },
 });
 

@@ -966,32 +966,39 @@ const HotelDetailScreen = ({ route, navigation }) => {
                 </View>
               ))}
             </View>
-            {/* Contact */}
-            {(hotel.phone || hotel.website || hotel.google_maps_url) && (
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Contact & Info</Text>
-                {hotel.google_maps_url && (
-                  <TouchableOpacity style={styles.contactRow} onPress={() => Linking.openURL(hotel.google_maps_url)}>
-                    <Ionicons name="map-outline" size={18} color="#3b82f6" />
-                    <Text style={styles.contactLink}>Open in Google Maps</Text>
-                  </TouchableOpacity>
-                )}
-                {hotel.website && (
-                  <TouchableOpacity style={styles.contactRow} onPress={() => Linking.openURL(hotel.website)}>
-                    <Ionicons name="globe-outline" size={18} color="#3b82f6" />
-                    <Text style={styles.contactLink} numberOfLines={1}>
-                      {hotel.website.replace(/^https?:\/\/(www\.)?/, '')}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                {hotel.phone && (
-                  <TouchableOpacity style={styles.contactRow} onPress={() => Linking.openURL(`tel:${hotel.phone}`)}>
-                    <Ionicons name="call-outline" size={18} color="#3b82f6" />
-                    <Text style={styles.contactLink}>{hotel.phone}</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
+            {/* Contact & Info — always show Maps button (free, no API key needed) */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Contact & Info</Text>
+
+              {/* Google Maps button — built from hotel name + location, same as location screen */}
+              <TouchableOpacity
+                style={styles.contactRow}
+                onPress={() => {
+                  const query = encodeURIComponent(
+                    `${hotel.name || ''} ${hotel.location || ''} Sri Lanka`
+                  );
+                  Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`);
+                }}
+              >
+                <Ionicons name="map-outline" size={18} color="#3b82f6" />
+                <Text style={styles.contactLink}>Open in Google Maps</Text>
+              </TouchableOpacity>
+
+              {hotel.website && (
+                <TouchableOpacity style={styles.contactRow} onPress={() => Linking.openURL(hotel.website)}>
+                  <Ionicons name="globe-outline" size={18} color="#3b82f6" />
+                  <Text style={styles.contactLink} numberOfLines={1}>
+                    {hotel.website.replace(/^https?:\/\/(www\.)?/, '')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              {hotel.phone && (
+                <TouchableOpacity style={styles.contactRow} onPress={() => Linking.openURL(`tel:${hotel.phone}`)}>
+                  <Ionicons name="call-outline" size={18} color="#3b82f6" />
+                  <Text style={styles.contactLink}>{hotel.phone}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         );
 
