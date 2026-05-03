@@ -254,11 +254,15 @@ def get_file_id(mapping: dict, location_name: str, filename: str) -> Optional[st
 # Uses `requests` directly instead of googleapiclient's MediaIoBaseDownload.
 # `requests` has thread-safe connection pooling; httplib2 does NOT.
 
-def _get_thread_session(credentials_path: str):
+def _get_thread_session(credentials_path: str, force_new: bool = False):
     """
     Get a thread-local requests.Session with a valid OAuth2 bearer token.
     Refreshes the token automatically when it expires.
     Each thread has its own session — fully thread-safe.
+
+    When force_new=True, discards any cached credentials and re-reads
+    from the JSON key file. This handles the case where a previous
+    refresh failed with invalid_grant (e.g., after a clock-sync fix).
     """
     import requests as _requests
     from google.oauth2 import service_account
@@ -269,23 +273,34 @@ def _get_thread_session(credentials_path: str):
         logger.error(f"[Drive] Credentials not found: {stored_path}")
         return None, None
 
-    # Load or refresh credentials per thread
-    creds = getattr(_thread_local, 'creds', None)
-    if creds is None:
-        creds = service_account.Credentials.from_service_account_file(
-            stored_path,
-            scopes=['https://www.googleapis.com/auth/drive.readonly']
-        )
-        _thread_local.creds = creds
+    # If forced refresh or no cached creds, always load fresh from file
+    if force_new or getattr(_thread_local, 'creds', None) is None:
+        try:
+            creds = service_account.Credentials.from_service_account_file(
+                stored_path,
+                scopes=['https://www.googleapis.com/auth/drive.readonly']
+            )
+            _thread_local.creds = creds
+            _thread_local.req_session = None  # Force new session with fresh token
+            logger.info(f"[Drive] Loaded fresh credentials from {Path(stored_path).name}")
+        except Exception as e:
+            logger.error(f"[Drive] Failed to load credentials from file: {e}")
+            return None, None
+
+    creds = _thread_local.creds
 
     # Refresh token if expired or not yet obtained
     if not creds.valid:
         try:
             transport = ga_transport.Request()
             creds.refresh(transport)
+            logger.info("[Drive] Token refreshed successfully")
         except Exception as e:
+            err_str = str(e)
             logger.error(f"[Drive] Token refresh failed: {e}")
+            # Clear cached creds so the next request retries from scratch
             _thread_local.creds = None
+            _thread_local.req_session = None
             return None, None
 
     # Get or create the thread-local requests session
@@ -299,6 +314,46 @@ def _get_thread_session(credentials_path: str):
         session.headers['Authorization'] = f'Bearer {creds.token}'
 
     return session, creds
+
+
+def _fetch_public(file_id: str, cache_key: str) -> Optional[Tuple[bytes, str]]:
+    """
+    Try to download a Drive file without authentication.
+    Works only when the file/folder is shared as 'Anyone with the link'.
+    Uses the Drive v3 webContentLink style URL with a session cookie bypass.
+    """
+    import requests as _requests
+
+    session = _requests.Session()
+    # First attempt: direct API-style public download
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    try:
+        r = session.get(url, timeout=15, allow_redirects=True)
+        ct = r.headers.get('Content-Type', '')
+
+        # Google shows an HTML confirm page for files >~25MB — handle it
+        if r.status_code == 200 and 'text/html' not in ct and len(r.content) > 1000:
+            logger.info(f"[Drive] ✅ Public download OK for {cache_key}")
+            return r.content, ct.split(';')[0] or 'image/jpeg'
+
+        # If we got a confirm page, follow the confirm token
+        if r.status_code == 200 and 'text/html' in ct:
+            # Extract confirm token
+            import re
+            match = re.search(r'confirm=([0-9A-Za-z_\-]+)', r.text)
+            if match:
+                token = match.group(1)
+                r2 = session.get(f"{url}&confirm={token}", timeout=30, allow_redirects=True)
+                ct2 = r2.headers.get('Content-Type', '')
+                if r2.status_code == 200 and 'text/html' not in ct2 and len(r2.content) > 1000:
+                    logger.info(f"[Drive] ✅ Public download OK (confirm) for {cache_key}")
+                    return r2.content, ct2.split(';')[0] or 'image/jpeg'
+
+        logger.debug(f"[Drive] Public download not available for {cache_key} (status={r.status_code}, ct={ct})")
+        return None
+    except Exception as e:
+        logger.debug(f"[Drive] Public download failed for {cache_key}: {e}")
+        return None
 
 
 def fetch_image(
@@ -315,9 +370,13 @@ def fetch_image(
     Flow:
       1. Check in-memory cache → return immediately if hit
       2. Look up Drive file ID in the pre-loaded mapping
-      3. Download via requests (thread-safe, with 30s timeout)
+      3a. Try PUBLIC download first (works if folder is shared publicly — no key needed)
+      3b. Fall back to authenticated API download (requires valid service account key)
       4. Cache the result for future requests
       5. Return (image_bytes, mime_type)
+
+    TIP: Share the Drive images folder as 'Anyone with the link can view'
+    to make auth permanently unnecessary.
     """
     cache_key = f"{location_name}/{filename}"
     cache = _get_cache(max_items=max_cache_items, ttl=cache_ttl)
@@ -335,22 +394,37 @@ def fetch_image(
     if not file_id:
         return None
 
-    # ── 3. Download via requests (thread-safe) ─────────────────────────────────
+    # ── 3a. Try public download first (no auth required) ──────────────────────
+    result = _fetch_public(file_id, cache_key)
+    if result is not None:
+        image_bytes, mime_type = result
+        cache.set(cache_key, image_bytes, mime_type)
+        return image_bytes, mime_type
+
+    # ── 3b. Fall back to authenticated API download ────────────────────────────
     try:
         session, creds = _get_thread_session(credentials_path)
         if session is None:
-            return None
+            # Credentials are broken — try one immediate recovery with fresh load
+            logger.info(f"[Drive] Retrying with fresh credentials for {cache_key}...")
+            session, creds = _get_thread_session(credentials_path, force_new=True)
+            if session is None:
+                logger.error(f"[Drive] ❌ Auth failed after credential reload for '{cache_key}'")
+                logger.error(
+                    "[Drive] ⚠️  PERMANENT FIX: Share your Google Drive images folder "
+                    "as 'Anyone with the link can view' to eliminate service account dependency."
+                )
+                return None
 
         url = f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media"
         response = session.get(url, timeout=30)
 
-        # Token may have expired mid-request — refresh and retry once
+        # Token may have expired mid-request — force fresh credentials and retry
         if response.status_code == 401:
-            logger.info(f"[Drive] Token expired, refreshing for {cache_key}...")
-            from google.auth.transport.requests import Request
-            creds.refresh(Request())
-            session.headers['Authorization'] = f'Bearer {creds.token}'
-            _thread_local.req_session = None  # force new session next time
+            logger.info(f"[Drive] 401 received — reloading credentials for {cache_key}...")
+            session, creds = _get_thread_session(credentials_path, force_new=True)
+            if session is None:
+                return None
             response = session.get(url, timeout=30)
 
         if response.status_code != 200:
