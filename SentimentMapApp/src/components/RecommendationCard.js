@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiService from '../services/apiService';
+import { getLocationCity } from '../utils/locationCities';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -164,7 +165,7 @@ const RecommendationCard = ({ location, onPress, horizontal = false }) => {
                         <Text style={styles.locationName} numberOfLines={1}>
                             {location.location}
                         </Text>
-                        <Text style={styles.locationSubtitle}>Sri Lanka • Attraction</Text>
+                        <Text style={styles.locationSubtitle}>Sri Lanka • {getLocationCity(location.location)}</Text>
                     </View>
                     <View style={styles.favouriteButton}>
                         <Ionicons name="heart-outline" size={18} color="#0c2340" />

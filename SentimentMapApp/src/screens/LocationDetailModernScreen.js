@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import apiService from '../services/apiService';
+import { getLocationCity } from '../utils/locationCities';
 
 const PREVIEW_GALLERY_COUNT = 4;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -525,7 +526,7 @@ const LocationDetailModernScreen = ({ route, navigation }) => {
           <View style={styles.metaRow}>
             <View style={styles.metaItem}>
               <Ionicons name="location" size={13} color="#64748b" />
-              <Text style={styles.metaText}>Sri Lanka</Text>
+              <Text style={styles.metaText}>{getLocationCity(locationData.location)}</Text>
             </View>
           </View>
 

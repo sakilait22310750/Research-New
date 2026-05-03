@@ -30,6 +30,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import apiService from '../services/apiService';
+import { getLocationCity } from '../utils/locationCities';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -244,7 +245,7 @@ const WriteReviewScreen = ({ route, navigation }) => {
           </View>
           <View>
             <Text style={styles.locationChipName}>{locationName}</Text>
-            <Text style={styles.locationChipSub}>Sri Lanka</Text>
+            <Text style={styles.locationChipSub}>{getLocationCity(locationName)}, Sri Lanka</Text>
           </View>
         </View>
       </View>
