@@ -682,6 +682,10 @@ import {
   Linking,
   Modal,
   Animated,
+  TextInput,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -758,6 +762,12 @@ const HotelDetailScreen = ({ route, navigation }) => {
   const [aiInsights, setAiInsights] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState(null);
+
+  // ── Review form state ──────────────────────────────────────────────────────
+  const [reviewText, setReviewText] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [userReviews, setUserReviews] = useState([]);
   const aiLoadedFor = useRef(null);
 
   // Show toast helper
@@ -1023,41 +1033,127 @@ const HotelDetailScreen = ({ route, navigation }) => {
           </View>
         );
 
-      case 'Reviews':
-        const reviews = hotel.reviews?.filter(r => r.review_text?.length > 20).slice(0, 10) || [];
-        return reviews.length > 0 ? (
-          <View>
-            {reviews.map((r, i) => {
-              const initials = `${String.fromCharCode(65 + (i % 26))}`;
-              return (
-                <View key={i} style={[styles.card, { marginBottom: 10 }]}>
-                  <View style={styles.reviewHeader}>
-                    <View style={styles.reviewAvatar}>
-                      <Text style={styles.reviewAvatarText}>{initials}</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.reviewerName}>Guest {initials}.</Text>
-                      <Text style={styles.reviewDate}>
-                        {r.date_of_review ? new Date(r.date_of_review).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '2025'}
-                      </Text>
-                    </View>
-                    <View style={styles.reviewStars}>
-                      {[1, 2, 3, 4, 5].map(s => (
-                        <Ionicons key={s} name={s <= Math.round((r.sentiment_score ?? 0.5) * 5) ? 'star' : 'star-outline'}
-                          size={13} color="#f59e0b" />
-                      ))}
-                    </View>
-                  </View>
-                  <Text style={styles.reviewText} numberOfLines={5}>{r.review_text}</Text>
+      case 'Reviews': {
+        const existingReviews = hotel.reviews?.filter(r => r.review_text?.length > 20).slice(0, 10) || [];
+        const allReviews = [...userReviews, ...existingReviews];
+
+        const submitReview = async () => {
+          if (!reviewText.trim()) {
+            Alert.alert('Missing review', 'Please write something before submitting.');
+            return;
+          }
+          setReviewSubmitting(true);
+          try {
+            const newReview = {
+              review_text: reviewText.trim(),
+              rating: reviewRating,
+              user_name: 'You',
+              date_of_review: new Date().toISOString(),
+            };
+            // Post to backend
+            await hotelApiService.request(`/hotels/${hotelId}/reviews`, {
+              method: 'POST',
+              body: JSON.stringify(newReview),
+            });
+            // Show immediately in list
+            setUserReviews(prev => [{ ...newReview, _isNew: true }, ...prev]);
+            setReviewText('');
+            setReviewRating(5);
+            showToast('✅ Review submitted!');
+          } catch (e) {
+            Alert.alert('Error', 'Failed to submit review. Please try again.');
+          } finally {
+            setReviewSubmitting(false);
+          }
+        };
+
+        return (
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            {/* ── Write a Review form ── */}
+            <View style={styles.writeReviewCard}>
+              <Text style={styles.writeReviewTitle}>Write a Review</Text>
+
+              {/* Star rating picker */}
+              <View style={styles.starPickerRow}>
+                <Text style={styles.starPickerLabel}>Your Rating:</Text>
+                <View style={styles.starPicker}>
+                  {[1, 2, 3, 4, 5].map(s => (
+                    <TouchableOpacity key={s} onPress={() => setReviewRating(s)}>
+                      <Ionicons
+                        name={s <= reviewRating ? 'star' : 'star-outline'}
+                        size={28}
+                        color="#f59e0b"
+                      />
+                    </TouchableOpacity>
+                  ))}
                 </View>
-              );
-            })}
-          </View>
-        ) : (
-          <View style={styles.card}>
-            <Text style={{ color: '#94a3b8', textAlign: 'center', paddingVertical: 20 }}>No reviews available yet.</Text>
-          </View>
+              </View>
+
+              {/* Text input */}
+              <TextInput
+                style={styles.reviewInput}
+                placeholder="Share your experience at this hotel..."
+                placeholderTextColor="#9ca3af"
+                multiline
+                numberOfLines={4}
+                value={reviewText}
+                onChangeText={setReviewText}
+                textAlignVertical="top"
+              />
+
+              {/* Submit button */}
+              <TouchableOpacity
+                style={[styles.submitReviewBtn, reviewSubmitting && { opacity: 0.6 }]}
+                onPress={submitReview}
+                disabled={reviewSubmitting}
+              >
+                {reviewSubmitting
+                  ? <ActivityIndicator size="small" color="#fff" />
+                  : <Text style={styles.submitReviewBtnText}>Submit Review</Text>
+                }
+              </TouchableOpacity>
+            </View>
+
+            {/* ── Reviews list ── */}
+            {allReviews.length > 0 ? (
+              <View style={{ marginTop: 8 }}>
+                {allReviews.map((r, i) => {
+                  const initials = r._isNew ? 'Y' : `${String.fromCharCode(65 + (i % 26))}`;
+                  const name = r._isNew ? 'You' : (r.user_name || `Guest ${initials}.`);
+                  const stars = r._isNew ? r.rating : Math.round((r.sentiment_score ?? 0.5) * 5);
+                  return (
+                    <View key={i} style={[styles.card, { marginBottom: 10 }, r._isNew && styles.newReviewCard]}>
+                      <View style={styles.reviewHeader}>
+                        <View style={[styles.reviewAvatar, r._isNew && { backgroundColor: '#10b981' }]}>
+                          <Text style={styles.reviewAvatarText}>{initials}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.reviewerName}>{name}</Text>
+                          <Text style={styles.reviewDate}>
+                            {r.date_of_review
+                              ? new Date(r.date_of_review).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+                              : '2025'}
+                          </Text>
+                        </View>
+                        <View style={styles.reviewStars}>
+                          {[1, 2, 3, 4, 5].map(s => (
+                            <Ionicons key={s} name={s <= stars ? 'star' : 'star-outline'} size={13} color="#f59e0b" />
+                          ))}
+                        </View>
+                      </View>
+                      <Text style={styles.reviewText} numberOfLines={5}>{r.review_text}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            ) : (
+              <View style={styles.card}>
+                <Text style={{ color: '#94a3b8', textAlign: 'center', paddingVertical: 20 }}>No reviews yet. Be the first!</Text>
+              </View>
+            )}
+          </KeyboardAvoidingView>
         );
+      }
 
 
 
@@ -1571,6 +1667,70 @@ const styles = StyleSheet.create({
     flex: 1, paddingVertical: 14, borderRadius: 14, backgroundColor: '#f59e0b', alignItems: 'center',
   },
   modalContinueText: { fontSize: 15, fontWeight: '800', color: '#fff' },
+
+  // ── Write a Review styles ───────────────────────────────────────────────────
+  writeReviewCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+  },
+  writeReviewTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0c2340',
+    marginBottom: 14,
+  },
+  starPickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 14,
+    gap: 12,
+  },
+  starPickerLabel: {
+    fontSize: 14,
+    color: '#475569',
+    fontWeight: '600',
+  },
+  starPicker: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  reviewInput: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 14,
+    color: '#1e293b',
+    minHeight: 100,
+    backgroundColor: '#f8fafc',
+    marginBottom: 14,
+  },
+  submitReviewBtn: {
+    backgroundColor: '#0c2340',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  submitReviewBtnText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  newReviewCard: {
+    borderColor: '#10b981',
+    borderWidth: 1.5,
+    backgroundColor: '#f0fdf4',
+  },
 });
 
 export default HotelDetailScreen;
