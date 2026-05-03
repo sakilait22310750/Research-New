@@ -35,13 +35,13 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // App theme colours
 const BRAND_GREEN = '#3d9e8c';  // kept for subtle accents (recommend toggle, photo picker)
-const BRAND_NAVY  = '#0c2340';  // primary navy
-const STAR_COLOR  = '#f59e0b';  // amber-yellow for star ratings
+const BRAND_NAVY = '#0c2340';  // primary navy
+const STAR_COLOR = '#f59e0b';  // amber-yellow for star ratings
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 const RATING_LABELS = ['', 'Bad', 'So so', 'Good', 'Great', 'Amazing'];
-const OVERALL_MSG   = [
+const OVERALL_MSG = [
   '',
   "That's a tough visit. We'd love to know what went wrong.",
   'Every experience can teach us something.',
@@ -99,9 +99,9 @@ const ScaleSelector = ({ label, value, onChange }) => (
 );
 
 const scaleStyles = StyleSheet.create({
-  wrap:      { marginBottom: 22 },
-  label:     { fontSize: 15, fontWeight: '700', color: BRAND_NAVY, marginBottom: 10 },
-  scaleRow:  { flexDirection: 'row', justifyContent: 'space-between' },
+  wrap: { marginBottom: 22 },
+  label: { fontSize: 15, fontWeight: '700', color: BRAND_NAVY, marginBottom: 10 },
+  scaleRow: { flexDirection: 'row', justifyContent: 'space-between' },
   dot: {
     width: 50,
     height: 50,
@@ -113,9 +113,9 @@ const scaleStyles = StyleSheet.create({
     backgroundColor: '#f9fafb',
   },
   dotActive: { backgroundColor: STAR_COLOR, borderColor: STAR_COLOR },
-  dotText:     { fontSize: 16, fontWeight: '600', color: '#6b7280' },
+  dotText: { fontSize: 16, fontWeight: '600', color: '#6b7280' },
   dotTextActive: { color: '#ffffff' },
-  labelRow:  { flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 },
+  labelRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 },
   scaleLabelText: { fontSize: 11, color: '#9ca3af', width: 50, textAlign: 'center' },
 });
 
@@ -128,15 +128,15 @@ const WriteReviewScreen = ({ route, navigation }) => {
   const [step, setStep] = useState(1); // 1 | 2 | 3
 
   // Step 1 state
-  const [overallRating,   setOverallRating]   = useState(0);
-  const [recommends,      setRecommends]       = useState(false);
-  const [easeOfAccess,    setEaseOfAccess]     = useState(3);
-  const [facilities,      setFacilities]       = useState(3);
+  const [overallRating, setOverallRating] = useState(0);
+  const [recommends, setRecommends] = useState(false);
+  const [easeOfAccess, setEaseOfAccess] = useState(3);
+  const [facilities, setFacilities] = useState(3);
 
   // Step 2 state
-  const [reviewText,  setReviewText]  = useState('');
+  const [reviewText, setReviewText] = useState('');
   const [reviewTitle, setReviewTitle] = useState('');
-  const [photos,      setPhotos]      = useState([]); // array of { uri, name, type }
+  const [photos, setPhotos] = useState([]); // array of { uri, name, type }
 
   // Submission
   const [submitting, setSubmitting] = useState(false);
@@ -165,7 +165,7 @@ const WriteReviewScreen = ({ route, navigation }) => {
 
     if (!result.canceled && result.assets?.length) {
       const newPhotos = result.assets.map((a) => ({
-        uri:  a.uri,
+        uri: a.uri,
         name: a.fileName || `photo_${Date.now()}.jpg`,
         type: a.mimeType || 'image/jpeg',
       }));
@@ -188,14 +188,14 @@ const WriteReviewScreen = ({ route, navigation }) => {
     setSubmitting(true);
     try {
       const result = await apiService.submitUserReview(locationName, {
-        reviewerName:  'Traveller',
+        reviewerName: 'Traveller',
         overallRating: overallRating || 5,
-        recommends:    recommends,
-        easeOfAccess:  easeOfAccess,
-        facilities:    facilities,
-        reviewTitle:   reviewTitle,
-        reviewText:    reviewText,
-        photos:        photos,
+        recommends: recommends,
+        easeOfAccess: easeOfAccess,
+        facilities: facilities,
+        reviewTitle: reviewTitle,
+        reviewText: reviewText,
+        photos: photos,
       });
       setSubmittedReview(result);
       setStep(3);
@@ -295,7 +295,7 @@ const WriteReviewScreen = ({ route, navigation }) => {
                 How would you rate the following aspects?
               </Text>
               <ScaleSelector label="Ease of access" value={easeOfAccess} onChange={setEaseOfAccess} />
-              <ScaleSelector label="Facilities"     value={facilities}   onChange={setFacilities} />
+              <ScaleSelector label="Facilities" value={facilities} onChange={setFacilities} />
 
               {/* CTA */}
               <TouchableOpacity style={styles.primaryBtn} onPress={goNext1} activeOpacity={0.85}>
@@ -402,12 +402,12 @@ const WriteReviewScreen = ({ route, navigation }) => {
                     name={s <= (submittedReview?.overallRating || overallRating) ? 'star' : 'star-outline'}
                     size={36}
                     color={s <= (submittedReview?.overallRating || overallRating) ? STAR_COLOR : '#d1d5db'}
-                    style={{ marginHorizontal: 3 }}
+                    style={{ marginHorizontal: 10, marginVertical: 30 }}
                   />
                 ))}
               </View>
 
-              <Ionicons name="star" size={60} color={STAR_COLOR} style={{ marginVertical: 20 }} />
+              <Ionicons name="star" size={60} color={STAR_COLOR} style={{ marginVertical: 50 }} />
 
               <Text style={styles.thankYouTitle}>Thank you for your review!</Text>
               <Text style={styles.thankYouSub}>
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     backgroundColor: BRAND_NAVY,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
-    paddingBottom: 20,
+    paddingBottom: 50,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.18,
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   locationChipName: { fontSize: 15, fontWeight: '700', color: BRAND_NAVY },
-  locationChipSub:  { fontSize: 12, color: '#64748b' },
+  locationChipSub: { fontSize: 12, color: '#64748b' },
 
   scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
 
@@ -520,6 +520,7 @@ const styles = StyleSheet.create({
     color: BRAND_NAVY,
     textAlign: 'center',
     marginBottom: 20,
+    marginTop: 30,
   },
   ratingMsg: {
     textAlign: 'center',
@@ -595,7 +596,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: BRAND_NAVY,
     marginBottom: 8,
-    marginTop: 6,
+    marginTop: 20,
   },
   textArea: {
     borderWidth: 1.5,
@@ -672,7 +673,7 @@ const styles = StyleSheet.create({
   // Primary button — navy blue
   primaryBtn: {
     backgroundColor: BRAND_NAVY,
-    borderRadius: 14,
+    borderRadius: 25,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 8,
